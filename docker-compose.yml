@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  servisport-db:
+    image: postgres:16-alpine
+    container_name: servisport-postgres
+    environment:
+      POSTGRES_DB: servisport_db
+      POSTGRES_USER: servisport_user
+      POSTGRES_PASSWORD: servisport_secure_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - servisport_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U servisport_user -d servisport_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  servisport-redis:
+    image: redis:7-alpine
+    container_name: servisport-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - servisport_redisdata:/data
+
+  servisport-web:
+    build: .
+    container_name: servisport-app
+    depends_on:
+      servisport-db:
+        condition: service_healthy
+      servisport-redis:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgres://servisport_user:servisport_secure_password@servisport-db:5432/servisport_db
+      REDIS_URL: redis://servisport-redis:6379
+      PORT: 3000
+    ports:
+      - "3000:3000"
+
+volumes:
+  servisport_pgdata:
+  servisport_redisdata:
