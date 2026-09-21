@@ -662,6 +662,7 @@
 
   <!-- Fullscreen Login Portal (Official Civic Desk E-Government) -->
   <div class="login-overlay" id="loginPortal">
+    <script>if (localStorage.getItem('sp_logged_in') === 'true') document.getElementById('loginPortal').style.display = 'none';</script>
     <div class="civic-login-box">
       <!-- Top Municipal Banner -->
       <div class="civic-gov-header-bar">
@@ -1693,12 +1694,14 @@
       setTimeout(() => {
         btn.innerHTML = origText;
         btn.disabled = false;
+        localStorage.setItem('sp_logged_in', 'true');
         document.getElementById('loginPortal').style.display = 'none';
         showToast(currentLang === 'tr' ? `Giriş başarılı! Aktif Kullanıcı: ${currentUser.name}` : `Login successful! Active Persona: ${currentUser.name}`);
       }, 350);
     }
 
     function logoutUser() {
+      localStorage.removeItem('sp_logged_in');
       document.getElementById('loginPortal').style.display = 'flex';
       showToast(currentLang === 'tr' ? 'Oturum kapatıldı. Giriş ekranına dönüldü.' : 'Logged out. Returned to login portal.');
     }
@@ -1724,6 +1727,10 @@
 
     // Init TR default
     applyLanguage(currentLang);
+    if (localStorage.getItem('sp_logged_in') === 'true') {
+      const p = document.getElementById('loginPortal');
+      if (p) p.style.display = 'none';
+    }
     document.getElementById('headerUserName').textContent = currentUser.name;
     document.getElementById('headerUserRole').textContent = currentUser.role;
     document.getElementById('applicantFullName').value = currentUser.name;
