@@ -1,116 +1,108 @@
-# ServisPort — Online Application & Booking Portal
+# ServisPort 🏛️
+> **Kamu Hizmet Masası & Randevu Portalı • GovTech E-Devlet & Redis Dağıtık Kilit Mimarisi**
 
-![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=flat-square)
-![Next.js](https://img.shields.io/badge/Next.js-14_App_Router-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?style=flat-square&logo=typescript)
-![Redis](https://img.shields.io/badge/Redis-7_Distributed_Locking-red?style=flat-square&logo=redis)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql)
-![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)
-
-ServisPort is an enterprise-tier citizen and customer application intake portal designed to handle high-concurrency appointment scheduling, document verification, and transactional confirmation alerts with strict zero-double-booking guarantees.
+[![Canlı Demo](https://img.shields.io/badge/Canl%C4%B1_Demo-servisport.web.app-0f766e?style=for-the-badge&logo=google-chrome&logoColor=white)](https://servisport.web.app)
+[![Lisans](https://img.shields.io/badge/Lisans-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Teknoloji](https://img.shields.io/badge/Teknoloji-Vanilla_ES6%2B_No_Framework-yellow?style=for-the-badge&logo=javascript)](https://developer.mozilla.org)
+[![Arayüz](https://img.shields.io/badge/Tasar%C4%B1m-Civic_Desk_GovTech-042f2e?style=for-the-badge&logo=css3)](https://developer.mozilla.org)
+[![Dil](https://img.shields.io/badge/Dil-T%C3%BCrk%C3%A7e_%7C_English-green?style=for-the-badge)](https://servisport.web.app)
 
 ---
 
-## 🏛️ System Architecture
+## 📸 Canlı Önizleme (Previews)
 
-```
-                       +---------------------------------------+
-                       |          User Web Browser             |
-                       |       (Next.js 14 Responsive)         |
-                       +-------------------+-------------------+
-                                           | HTTP/2 & HTTPS
-                                           v
-+------------------------------------------------------------------------------------+
-|                         Next.js App Router Edge & API Server                       |
-|                                                                                    |
-|   +----------------------------------------------------------------------------+   |
-|   |                       Zod Payload Schema Validation                        |   |
-|   +--------------------------------------+-------------------------------------+   |
-|                                          |                                         |
-|                 +------------------------+------------------------+                |
-|                 |                                                 |                |
-|                 v                                                 v                |
-|  +------------------------------+                +------------------------------+  |
-|  |     Redis Redlock Engine     |                |     Document Vault Proxy     |  |
-|  | (Distributed Concurrency Lk) |                |  (Anti-malware & MIME Check) |  |
-|  +--------------+---------------+                +--------------+---------------+  |
-|                 | Lock Granted                                  | Clean Metadata   |
-|                 +------------------------+----------------------+                  |
-|                                          v                                         |
-|                          +-------------------------------+                         |
-|                          |    PostgreSQL 16 Engine Pool  |                         |
-|                          +---------------+---------------+                         |
-+------------------------------------------|-----------------------------------------+
-                                           v
-                       +---------------------------------------+
-                       |       SMS / Email Webhook Dispatch    |
-                       |      (Tracking Code Confirmation)     |
-                       +---------------------------------------+
-```
+### 1. Dijital Kamu Masası & 4 Adımlı Randevu Portalı
+Üstte duyuru bandı (`.civic-bulletin-bar`) ve hero arama alanı (`.civic-hero`), 4 ana kamu hizmet kartı, Redis kilit havuzlu randevu sihirbazı, canlı başvuru takip tablosu ve **Başvuruyu İptal Et / Sil** aksiyonu:
+![ServisPort Kamu Masası Önizleme](docs/preview-dashboard.png)
+
+### 2. Resmi E-Belediye Kamu Masası Giriş Portalı
+T.C. Akıllı Belediyecilik bilgi sistemi başlık bandı, 256-Bit SSL ve KVKK güvenlik mührü, T.C. Kimlik / e-Devlet giriş alanları ve hazır roller:
+![ServisPort Login Önizleme](docs/preview-login.png)
 
 ---
 
-## 🚀 Key Architectural Highlights
+## 🌟 Öne Çıkan Özellikler
 
-- **Concurrency-Safe Slot Locking**: Utilizes Redis distributed locks with exponential backoff to eliminate race conditions during peak appointment release spikes.
-- **Micro-Document Verification**: Secure file intake pipeline verifying MIME types, byte length constraints, and signature verification.
-- **Stateless Horizontal Scaling**: Edge-compatible API routes with low cold-start latency.
-- **Accessibility & Compliance (WCAG 2.1 AA)**: Semantic HTML, ARIA landmarks, and keyboard-navigable scheduling components.
+### 1. Sektöre Özgü GovTech Kamu Masası Mimarisi
+- **Civic Desk Kurumsal Mimarisi**:
+  - Üstte canlı duyuru akışı (`2026/Q3 İmar, Nüfus ve Sosyal Yardım başvuruları kabul edilmektedir`).
+  - 4 büyük hizmet kategorisi (*Nüfus & Kimlik*, *İmar & Yapı Ruhsatı*, *İşyeri Ruhsat & Denetim*, *Sosyal Destek & Yardım*).
+- **Redis 7.2 Dağıtık Kilit (Distributed Lock) Simülasyonu**:
+  - Vatandaş bir saat aralığı seçtiğinde `SETNX` & `EXPIRE` komutlarıyla 10 dakikalık kilit rezerve edilir; çift rezervasyon (race condition) donanım seviyesinde engellenir.
+  - Canlı Redis olay akışı ve gecikme (latency) telemetrisi.
+
+### 2. Vatandaş Başvurusunu İptal Etme & Silme Mekanizması
+- **Başvuruyu İptal Et / Sil (`promptDeleteApplication`)**: Başvuru takip tablosunda her kaydın yanında kırmızı çöp kutusu butonu yer alır.
+- **Onay Modalı (`#deleteAppModal`)**: Başvuru referans koduyla onay penceresi açılır.
+- **Redis Kilit Havuzuna İade**: Başvuru silindiğinde rezerve edilen randevu slotu Redis havuzuna anında iade edilir, başvuru sayaçları düşürülür ve `localStorage` (`sp_apps_v2`) senkronize edilir.
+
+### 3. Oturum Kalıcılığı (Session Persistence) & Zero-Flicker Başlangıç
+- **Sayfa Yenilemelerinde Oturumu Hatırla**: Giriş onaylandığında `localStorage.setItem('sp_logged_in', 'true')` kaydı işlenir.
+- **Sıfır Titreme (Zero-Flicker)**: Sayfa yenilendiğinde (F5) inline script kontrolü sayesinde giriş ekranı hiç açılmadan doğrudan kamu masası gelir.
+- **Güvenli Çıkış**: Sağ üstteki kırmızı **"Çıkış"** butonuna basıldığında oturum sonlandırılır.
+- **Hazır Demo Bilgileri**: Giriş ekranında T.C. kimlik / e-posta ve şifre hazır girili gelir; altındaki hızlı rol butonlarıyla (`Kayıtlı Vatandaş`, `Kurumsal Müşteri / Esnaf`, `Birim Sorumlusu`) anında rol değiştirilebilir.
+
+### 4. Çift Dilli Tam Destek (TR | EN)
+- Sağ üstteki `[ TR | EN ]` dil seçici ile tüm kamu hizmet adları, randevu adımları, form etiketleri ve belediye duyuruları dinamik olarak çevrilir.
+- Başlangıç varsayılan dili **Türkçe**'dir.
 
 ---
 
-## 🔌 Core API Specifications
+## 🛠️ Teknoloji Yığını (Tech Stack)
 
-### `POST /api/appointments`
-Reserve and commit an appointment slot with distributed locking.
+| Katman | Teknoloji | Görevi |
+| :--- | :--- | :--- |
+| **Arayüz (UI)** | HTML5, CSS3 GovTech Turkuazı | E-Devlet ve akıllı belediyecilik görsel dili, 4 adımlı form |
+| **İş Mantığı** | Vanilla JavaScript (ES6+) | Dağıtık kilit havuzu mantığı, başvuru takip algoritması |
+| **İkonlar** | Bootstrap Icons v1.11.3 | Kamu, kimlik ve güvenlik simgeleri |
+| **Depolama** | HTML5 `localStorage` | Başvuru kayıtları, oturum durumu ve dil ayarları |
+| **Yayın** | Firebase Hosting | Yüksek erişilebilirlikli HTTPS kamu barındırması |
 
-**Request Payload:**
-```json
-{
-  "citizenName": "Can Demir",
-  "phone": "+905551234567",
-  "categoryId": 2,
-  "appointmentDate": "2026-11-05",
-  "slotTime": "14:30"
-}
+---
+
+## 📁 Proje Dizin Yapısı
+
 ```
-
-**Response (201 Created):**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-    "tracking_code": "SP-9A82FC",
-    "status": "SCHEDULED"
-  },
-  "message": "Appointment successfully scheduled!"
-}
+ServisPort/
+├── index.html              # Kamu masası ve e-belediye giriş portalı
+├── docs/                   # Dokümantasyon ve ekran görüntüleri
+│   ├── preview-dashboard.png # Kamu hizmet masası yüksek çözünürlüklü önizleme
+│   └── preview-login.png     # Resmi kamu giriş ekranı önizleme
+└── README.md               # Proje dokümantasyonu
 ```
 
 ---
 
-## 💻 Local Setup & Deployment
+## ⚡ Hızlı Başlangıç (Local Setup)
 
-### Run via Docker Compose
-```bash
-git clone https://github.com/kubrvk/ServisPort.git
-cd ServisPort
-
-# Start PostgreSQL, Redis, and Next.js portal
-docker compose up -d --build
-```
-Navigate to `http://localhost:3000` to interact with the scheduling portal.
-
-### Manual Development
-```bash
-npm install
-npm run dev
-```
+1. Depoyu klonlayın:
+   ```bash
+   git clone https://github.com/kubrvk/ServisPort.git
+   cd ServisPort
+   ```
+2. `index.html` dosyasını tarayıcınızda açın:
+   ```bash
+   start index.html
+   ```
+3. Alternatif yerel HTTP sunucusu ile çalıştırmak için:
+   ```bash
+   npx serve .
+   ```
+4. Tarayıcınızda açılan adrese gidin.
+   - *Giriş ekranını atlayıp doğrudan kamu masasını açmak için:* `http://localhost:3000/?demo=1`
 
 ---
 
-## 👤 Author & License
+## 🌐 Canlı Sistem
 
-- **Author**: `kubrvk` ([GitHub Profile](https://github.com/kubrvk))
-- **License**: MIT License.
+- **Canlı URL**: [https://servisport.web.app](https://servisport.web.app)
+- **Doğrudan Demo Bağlantısı**: [https://servisport.web.app/?demo=1](https://servisport.web.app/?demo=1)
+
+---
+
+## 👤 Geliştirici
+
+**Developed by Beraat Yetkin**
+- GitHub: [@kubrvk](https://github.com/kubrvk)
+- Proje Deposu: [ServisPort](https://github.com/kubrvk/ServisPort)
+- Portfolyo: [Beraat Yetkin Portfolio](https://github.com/kubrvk/portfolio)

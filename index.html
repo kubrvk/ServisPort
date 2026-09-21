@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr" data-theme="light">
 <head>
   <meta charset="UTF-8">
@@ -662,7 +662,7 @@
 
   <!-- Fullscreen Login Portal (Official Civic Desk E-Government) -->
   <div class="login-overlay" id="loginPortal">
-    <script>if (localStorage.getItem('sp_logged_in') === 'true') document.getElementById('loginPortal').style.display = 'none';</script>
+    <script>if (localStorage.getItem('sp_logged_in') === 'true' || location.search.includes('demo=1')) document.getElementById('loginPortal').style.display = 'none';</script>
     <div class="civic-login-box">
       <!-- Top Municipal Banner -->
       <div class="civic-gov-header-bar">
@@ -1727,7 +1727,7 @@
 
     // Init TR default
     applyLanguage(currentLang);
-    if (localStorage.getItem('sp_logged_in') === 'true') {
+    if (localStorage.getItem('sp_logged_in') === 'true' || location.search.includes('demo=1')) {
       const p = document.getElementById('loginPortal');
       if (p) p.style.display = 'none';
     }
