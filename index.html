@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ServisPort — Dijital Kamu Hizmetleri &amp; Randevu Portalı</title>
-  <meta name="description" content="ServisPort: Yüksek eşzamanlı dijital kamu hizmetleri, Redis tabanlı randevu slot rezervasyonu ve başvuru takip platformu.">
+  <title>ServisPort — Dijital Kamu Hizmetleri &amp; Randevu Masası</title>
+  <meta name="description" content="ServisPort: Yüksek eşzamanlı dijital kamu hizmetleri, Redis tabanlı randevu slot rezervasyonu, başvuru takip ve iptal platformu. Developed by Beraat Yetkin.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3L4 8v8c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V8L16 3z' fill='%231d4ed8'/%3E%3Cpath d='M11 16l3.5 3.5 6.5-6.5' stroke='%23ffffff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,8 +44,10 @@
       font-size: 14.5px;
       line-height: 1.5;
     }
+
+    /* Civic Desk Header */
     header {
-      background: var(--surface);
+      background: #ffffff;
       border-bottom: 1px solid var(--border);
       padding: 0.85rem 2rem;
       display: flex;
@@ -67,15 +69,16 @@
       text-decoration: none;
     }
     .brand-icon {
-      width: 36px;
-      height: 36px;
-      background: var(--primary);
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #1e40af, #2563eb);
       color: #fff;
-      border-radius: 8px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
     }
     .header-center {
       display: flex;
@@ -143,12 +146,78 @@
     .btn-accent:hover { background: #047857; }
     .btn-sm { padding: 0.35rem 0.65rem; font-size: 0.8rem; }
     
+    /* Municipal Civic Hero Banner */
+    .civic-hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: #fff;
+      padding: 2.25rem 2rem 1.75rem 2rem;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .civic-hero::after {
+      content: '';
+      position: absolute;
+      right: -50px;
+      bottom: -50px;
+      width: 260px;
+      height: 260px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .civic-hero-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .civic-hero-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .civic-hero-desc {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      max-width: 650px;
+      line-height: 1.5;
+    }
+
+    /* Civic Bulletin Ticker */
+    .civic-bulletin-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 2rem;
+      font-size: 0.82rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .civic-bulletin-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
     .nav-tabs-bar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
       display: flex;
       gap: 1.5rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
     }
     .tab-btn {
       padding: 0.85rem 0.2rem;
@@ -172,31 +241,6 @@
       max-width: 1280px;
       margin: 0 auto;
       width: 100%;
-    }
-
-    .gov-banner {
-      background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
-      color: #fff;
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: var(--shadow-md);
-      position: relative;
-      overflow: hidden;
-    }
-    .gov-banner h1 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 0.4rem;
-    }
-    .gov-banner p {
-      font-size: 0.95rem;
-      opacity: 0.9;
-      max-width: 680px;
     }
 
     .card {
@@ -377,7 +421,7 @@
 
     .app-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
     .app-table th { background: #f8fafc; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-    .app-table td { padding: 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .app-table td { padding: 0.95rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
     .badge {
       display: inline-flex;
@@ -638,13 +682,13 @@
       <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
       <div>
         <span>ServisPort</span>
-        <span style="font-size:0.75rem;font-weight:500;color:var(--text-muted);display:block;margin-top:-3px;" id="hdrSub">Dijital Kamu Hizmetleri Portalı</span>
+        <span style="font-size:0.75rem;font-weight:500;color:var(--text-muted);display:block;margin-top:-3px;" id="hdrSub">Dijital Kamu Masası &amp; Randevu</span>
       </div>
     </a>
 
     <div class="header-center">
       <span class="pulse-dot"></span>
-      <span id="hdrRedisStatus">Redis Dağıtık Kilit Aktif &bull; Redis 7.2 Kümesi</span>
+      <span id="hdrRedisStatus">Redis 7.2 Dağıtık Kilit &bull; Çift Rezervasyon Korumalı</span>
     </div>
 
     <div class="header-right">
@@ -656,11 +700,11 @@
 
       <div id="userBadge" style="display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;">
         <i class="bi bi-person-circle" style="font-size:1.3rem;color:var(--primary);"></i>
-        <span id="headerUserName" style="font-weight:600;">Kullanıcı</span>
+        <span id="headerUserName" style="font-weight:700;">Kullanıcı</span>
         <span id="headerUserRole" style="font-size:0.75rem;background:#e2e8f0;padding:0.15rem 0.45rem;border-radius:4px;color:#475569;">Vatandaş</span>
       </div>
       <button class="btn btn-outline btn-sm" onclick="openAuthModal()">
-        <i class="bi bi-person-gear"></i> <span id="btnSwitchRole">Rol Değiştir</span>
+        <i class="bi bi-person-gear"></i> <span id="btnSwitchRole">Rol</span>
       </button>
       <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:#fca5a5;" onclick="logoutUser()">
         <i class="bi bi-box-arrow-right"></i> <span id="lblLogout">Çıkış</span>
@@ -668,27 +712,52 @@
     </div>
   </header>
 
+  <!-- Civic Hero Section -->
+  <section class="civic-hero">
+    <div class="civic-hero-inner">
+      <div>
+        <h1 class="civic-hero-title">
+          <i class="bi bi-bank2"></i> <span id="bannerTitle">Dijital Kamu Masası &amp; Randevu Platformu</span>
+        </h1>
+        <p class="civic-hero-desc" id="bannerDesc">
+          e-Devlet standartlarında kimlik doğrulama, Redis dağıtık kilit havuzu ile çakışmasız randevu slot rezervasyonu ve anlık başvuru iptal yönetimi.
+        </p>
+      </div>
+      <div>
+        <button class="btn btn-primary" style="background:#38bdf8;color:#0f172a;font-weight:700;border:none;box-shadow:0 4px 14px rgba(56, 189, 248, 0.4);" onclick="switchTab('booking', document.getElementById('tabNav1'))">
+          <i class="bi bi-calendar2-plus-fill"></i> <span id="btnHeroBook">Hemen Randevu Al</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Municipal Civic Bulletin Bar -->
+  <div class="civic-bulletin-bar">
+    <div class="civic-bulletin-inner">
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <span style="background:#fee2e2;color:#dc2626;font-weight:800;padding:0.15rem 0.45rem;border-radius:4px;font-size:0.72rem;text-transform:uppercase;">DUYURU</span>
+        <span style="color:#334155;font-weight:600;" id="lblBulletinText">2026/Q3 İmar, Nüfus ve Sosyal Yardım başvuruları e-Devlet üzerinden kesintisiz kabul edilmektedir.</span>
+      </div>
+      <div style="color:var(--text-muted);font-family:var(--font-mono);font-size:0.78rem;">
+        <i class="bi bi-clock-history"></i> <span id="lblLiveClock">21.09.2026 &bull; Canlı Sistem</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Navigation Tabs -->
   <div class="nav-tabs-bar">
     <button class="tab-btn active" onclick="switchTab('booking', this)" id="tabNav1">
-      <i class="bi bi-calendar-plus"></i> Yeni Başvuru &amp; Randevu
+      <i class="bi bi-calendar-plus"></i> <span id="lblTabBooking">Yeni Başvuru &amp; Randevu</span>
     </button>
     <button class="tab-btn" onclick="switchTab('tracking', this)" id="tabNav2">
-      <i class="bi bi-card-checklist"></i> Başvuru Takip &amp; Durum (<span id="myAppCount">8</span>)
+      <i class="bi bi-card-checklist"></i> <span id="lblTabTracking">Başvuru Takip &amp; Durum</span> (<span id="myAppCount">8</span>)
     </button>
     <button class="tab-btn" onclick="switchTab('telemetry', this)" id="tabNav3">
-      <i class="bi bi-activity"></i> Redis Slot Kümesi Telemetrisi
+      <i class="bi bi-activity"></i> <span id="lblTabTelemetry">Redis Slot Kümesi Telemetrisi</span>
     </button>
   </div>
 
   <main>
-    <div class="gov-banner">
-      <div>
-        <h1 id="bannerTitle">Dijital Kamu Hizmetleri &amp; Randevu Platformu</h1>
-        <p id="bannerDesc">Alt-milisaniye seviyesinde çift randevu engelleme, anlık Redis dağıtık kilit rezervasyonu ve resmi evrak doğrulama altyapısı.</p>
-      </div>
-    </div>
-
     <!-- TAB 1: Booking & New Application -->
     <div id="tab-booking" class="tab-content">
       <div class="card">
@@ -855,7 +924,7 @@
               <button type="button" class="btn btn-outline" onclick="window.print()" id="btnPrintPass">
                 <i class="bi bi-printer"></i> Yazdır
               </button>
-              <button type="button" class="btn btn-primary" onclick="switchTab('tracking', document.querySelectorAll('.tab-btn')[1])" id="btnGoTracking">
+              <button type="button" class="btn btn-primary" onclick="switchTab('tracking', document.getElementById('tabNav2'))" id="btnGoTracking">
                 Başvurularıma Git <i class="bi bi-arrow-right"></i>
               </button>
             </div>
@@ -864,15 +933,15 @@
       </div>
     </div>
 
-    <!-- TAB 2: Tracking (Rich Dataset of 8 records) -->
+    <!-- TAB 2: Tracking (Rich Dataset with Deletion) -->
     <div id="tab-tracking" class="tab-content" style="display:none;">
       <div class="card">
         <div class="card-header">
           <div>
             <h2 class="card-title" id="trackSecTitle"><i class="bi bi-journal-text text-primary"></i> Kayıtlı Başvuru Dosyaları</h2>
-            <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.2rem;" id="trackSecDesc">Kullanıcı ve kurumsal müşteri randevu kayıtları.</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.2rem;" id="trackSecDesc">Kullanıcı ve kurumsal müşteri randevu kayıtları &bull; İptal ve silme yönetimi.</div>
           </div>
-          <input type="text" id="filterInput" placeholder="Referans no ile ara..." class="form-control" style="width:220px;padding:0.4rem 0.65rem;font-size:0.85rem;" oninput="renderApplications()">
+          <input type="text" id="filterInput" placeholder="Referans no ile ara..." class="form-control" style="width:240px;padding:0.4rem 0.65rem;font-size:0.85rem;" oninput="renderApplications()">
         </div>
 
         <div style="overflow-x:auto;">
@@ -884,7 +953,7 @@
                 <th id="thSvc">Hizmet Türü</th>
                 <th id="thTime">Randevu Zamanı</th>
                 <th id="thStat">İşlem Durumu</th>
-                <th style="text-align:right;" id="thAct">İşlem</th>
+                <th style="text-align:right;min-width:140px;" id="thAct">İşlem</th>
               </tr>
             </thead>
             <tbody id="applicationsTableBody"></tbody>
@@ -902,7 +971,7 @@
         </div>
         <div class="card" style="padding:1.25rem;">
           <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;" id="kpiLockTitle">Eşzamanlı Kilitler</div>
-          <div style="font-size:1.8rem;font-weight:800;color:#0f172a;margin-top:0.3rem;">142</div>
+          <div style="font-size:1.8rem;font-weight:800;color:#0f172a;margin-top:0.3rem;" id="kpiActiveLocks">142</div>
         </div>
         <div class="card" style="padding:1.25rem;">
           <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;" id="kpiColTitle">Önlenen Çakışmalar</div>
@@ -925,6 +994,32 @@
     </div>
   </main>
 
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" id="deleteAppModal">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header" style="border-bottom-color:#fee2e2;">
+        <h3 style="font-size:1.1rem;font-weight:700;color:var(--danger);" id="deleteAppModalTitle">
+          <i class="bi bi-exclamation-triangle-fill"></i> Başvuruyu İptal Et / Sil
+        </h3>
+        <button style="border:none;background:none;font-size:1.2rem;cursor:pointer;" onclick="closeDeleteAppModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.9rem;color:#475569;" id="deleteAppModalDesc">
+          Bu kamu hizmeti başvurusunu ve rezerve edilen randevu slotunu sistemden kalıcı olarak silmek istediğinize emin misiniz? Boşalan randevu slotu Redis kilit havuzuna iade edilecektir.
+        </p>
+        <div style="background:#fef2f2;border:1px solid #fecaca;padding:0.75rem;border-radius:8px;font-size:0.84rem;color:#991b1b;margin-top:0.75rem;" id="deleteAppTargetInfo">
+          SPT-2026-XXXX
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeDeleteAppModal()" id="btnCancelDeleteApp">Vazgeç</button>
+        <button type="button" class="btn btn-primary" style="background:var(--danger);border-color:var(--danger);" onclick="executeDeleteApplication()" id="btnConfirmDeleteApp">
+          <i class="bi bi-trash3-fill"></i> Başvuruyu Sil
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Role Modal -->
   <div class="modal-backdrop" id="authModal">
     <div class="modal-card">
@@ -945,13 +1040,9 @@
             <i class="bi bi-building" style="color:var(--accent);font-size:1.1rem;"></i>
             <div><strong>Müşteri</strong> &bull; Ruhsat ve İmar Talebi Yapan Şirket Yetkilisi</div>
           </div>
-          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Birim Sorumlusu', 'Memur')">
+          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Birim Sorumlusu', 'Belediye Yetkilisi')">
             <i class="bi bi-person-badge" style="color:#f59e0b;font-size:1.1rem;"></i>
             <div><strong>Birim Sorumlusu</strong> &bull; Randevu Kabul Masası Görevlisi</div>
-          </div>
-          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Yönetici', 'Sistem Yöneticisi')">
-            <i class="bi bi-shield-lock" style="color:#ef4444;font-size:1.1rem;"></i>
-            <div><strong>Yönetici</strong> &bull; Sistem Yöneticisi</div>
           </div>
         </div>
       </div>
@@ -1106,11 +1197,11 @@
       }
     ];
 
-    let applications = JSON.parse(localStorage.getItem('sp_apps')) || defaultApplications;
+    let applications = JSON.parse(localStorage.getItem('sp_apps_v2')) || defaultApplications;
 
     function saveState() {
       localStorage.setItem('sp_user', JSON.stringify(currentUser));
-      localStorage.setItem('sp_apps', JSON.stringify(applications));
+      localStorage.setItem('sp_apps_v2', JSON.stringify(applications));
       localStorage.setItem('servisport_lang', currentLang);
       document.getElementById('myAppCount').textContent = applications.length;
     }
@@ -1142,14 +1233,16 @@
       document.getElementById('langEn').className = (lang === 'en') ? 'active' : '';
 
       if (lang === 'tr') {
-        document.getElementById('hdrSub').textContent = 'Dijital Kamu Hizmetleri Portalı';
-        document.getElementById('hdrRedisStatus').innerHTML = 'Redis Dağıtık Kilit Aktif &bull; Redis 7.2 Kümesi';
-        document.getElementById('btnSwitchRole').textContent = 'Rol Değiştir';
-        document.getElementById('tabNav1').innerHTML = '<i class="bi bi-calendar-plus"></i> Yeni Başvuru &amp; Randevu';
-        document.getElementById('tabNav2').innerHTML = `<i class="bi bi-card-checklist"></i> Başvuru Takip &amp; Durum (<span id="myAppCount">${applications.length}</span>)`;
-        document.getElementById('tabNav3').innerHTML = '<i class="bi bi-activity"></i> Redis Slot Kümesi Telemetrisi';
-        document.getElementById('bannerTitle').textContent = 'Dijital Kamu Hizmetleri & Randevu Platformu';
-        document.getElementById('bannerDesc').textContent = 'Alt-milisaniye seviyesinde çift randevu engelleme, anlık Redis dağıtık kilit rezervasyonu ve resmi evrak doğrulama altyapısı.';
+        document.getElementById('hdrSub').textContent = 'Dijital Kamu Masası & Randevu';
+        document.getElementById('hdrRedisStatus').innerHTML = 'Redis 7.2 Dağıtık Kilit &bull; Çift Rezervasyon Korumalı';
+        document.getElementById('btnSwitchRole').textContent = 'Rol';
+        document.getElementById('lblTabBooking').textContent = 'Yeni Başvuru & Randevu';
+        document.getElementById('lblTabTracking').textContent = 'Başvuru Takip & Durum';
+        document.getElementById('lblTabTelemetry').textContent = 'Redis Slot Kümesi Telemetrisi';
+        document.getElementById('bannerTitle').textContent = 'Dijital Kamu Masası & Randevu Platformu';
+        document.getElementById('bannerDesc').textContent = 'e-Devlet standartlarında kimlik doğrulama, Redis dağıtık kilit havuzu ile çakışmasız randevu slot rezervasyonu ve anlık başvuru iptal yönetimi.';
+        document.getElementById('btnHeroBook').textContent = 'Hemen Randevu Al';
+        document.getElementById('lblBulletinText').textContent = '2026/Q3 İmar, Nüfus ve Sosyal Yardım başvuruları e-Devlet üzerinden kesintisiz kabul edilmektedir.';
         document.getElementById('stpLbl1').textContent = 'Hizmet Seçimi';
         document.getElementById('stpLbl2').textContent = 'Slot Kilitleme';
         document.getElementById('stpLbl3').textContent = 'Belge Doğrulama';
@@ -1180,7 +1273,7 @@
         document.getElementById('btnStep3Back').innerHTML = '<i class="bi bi-arrow-left"></i> Geri';
         document.getElementById('btnStep3Submit').innerHTML = '<i class="bi bi-check2-circle"></i> Başvuruyu Kesinleştir';
         document.getElementById('trackSecTitle').innerHTML = '<i class="bi bi-journal-text text-primary"></i> Kayıtlı Başvuru Dosyaları';
-        document.getElementById('trackSecDesc').textContent = 'Kullanıcı ve kurumsal müşteri randevu kayıtları.';
+        document.getElementById('trackSecDesc').textContent = 'Kullanıcı ve kurumsal müşteri randevu kayıtları • İptal ve silme yönetimi.';
         document.getElementById('filterInput').placeholder = 'Referans no ile ara...';
         document.getElementById('thRef').textContent = 'Referans Kodu';
         document.getElementById('thApp').textContent = 'Başvuran Bilgisi';
@@ -1195,6 +1288,10 @@
         document.getElementById('lblRoleModalTitle').textContent = 'Rol & Kullanıcı Seçimi';
         document.getElementById('lblRoleModalDesc').textContent = 'İşlem yapmak istediğiniz rolü seçiniz:';
         document.getElementById('btnRoleModalClose').textContent = 'Kapat';
+        document.getElementById('deleteAppModalTitle').innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Başvuruyu İptal Et / Sil';
+        document.getElementById('deleteAppModalDesc').textContent = 'Bu kamu hizmeti başvurusunu ve rezerve edilen randevu slotunu sistemden kalıcı olarak silmek istediğinize emin misiniz? Boşalan randevu slotu Redis kilit havuzuna iade edilecektir.';
+        document.getElementById('btnCancelDeleteApp').textContent = 'Vazgeç';
+        document.getElementById('btnConfirmDeleteApp').innerHTML = '<i class="bi bi-trash3-fill"></i> Başvuruyu Sil';
         if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Kamu Hizmetleri & Randevu Giriş Portalı';
         if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').textContent = 'T.C. Kimlik No / Kurumsal E-posta';
         if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').textContent = 'e-Devlet / Sistem Şifresi';
@@ -1209,14 +1306,16 @@
         if (document.getElementById('loginLangTr')) document.getElementById('loginLangTr').className = 'active';
         if (document.getElementById('loginLangEn')) document.getElementById('loginLangEn').className = '';
       } else {
-        document.getElementById('hdrSub').textContent = 'Public GovTech Service Portal';
-        document.getElementById('hdrRedisStatus').innerHTML = 'Redis Distributed Lock Active &bull; Redis 7.2 Cluster';
-        document.getElementById('btnSwitchRole').textContent = 'Switch Role';
-        document.getElementById('tabNav1').innerHTML = '<i class="bi bi-calendar-plus"></i> New Application &amp; Booking';
-        document.getElementById('tabNav2').innerHTML = `<i class="bi bi-card-checklist"></i> Applications &amp; Status (<span id="myAppCount">${applications.length}</span>)`;
-        document.getElementById('tabNav3').innerHTML = '<i class="bi bi-activity"></i> Redis Slot Engine Telemetry';
-        document.getElementById('bannerTitle').textContent = 'Digital Public Service Delivery Platform';
-        document.getElementById('bannerDesc').textContent = 'Sub-millisecond duplicate prevention, Redis distributed slot hold locks, and cryptographic identity document validation.';
+        document.getElementById('hdrSub').textContent = 'Public GovTech Service Desk';
+        document.getElementById('hdrRedisStatus').innerHTML = 'Redis 7.2 Distributed Lock &bull; Collision Protected';
+        document.getElementById('btnSwitchRole').textContent = 'Role';
+        document.getElementById('lblTabBooking').textContent = 'New Booking & Application';
+        document.getElementById('lblTabTracking').textContent = 'Application Tracking & Status';
+        document.getElementById('lblTabTelemetry').textContent = 'Redis Cluster Telemetry';
+        document.getElementById('bannerTitle').textContent = 'Civic Service Desk & Booking Platform';
+        document.getElementById('bannerDesc').textContent = 'Government-grade verification, sub-millisecond Redis lock reservations, and real-time application cancellation management.';
+        document.getElementById('btnHeroBook').textContent = 'Book Appointment';
+        document.getElementById('lblBulletinText').textContent = '2026/Q3 Zoning, Vital Records, and Welfare grants are open for citizen submissions.';
         document.getElementById('stpLbl1').textContent = 'Select Service';
         document.getElementById('stpLbl2').textContent = 'Reserve Slot';
         document.getElementById('stpLbl3').textContent = 'Verify Documents';
@@ -1247,7 +1346,7 @@
         document.getElementById('btnStep3Back').innerHTML = '<i class="bi bi-arrow-left"></i> Back';
         document.getElementById('btnStep3Submit').innerHTML = '<i class="bi bi-check2-circle"></i> Finalize Application';
         document.getElementById('trackSecTitle').innerHTML = '<i class="bi bi-journal-text text-primary"></i> Registered Service Records';
-        document.getElementById('trackSecDesc').textContent = 'Citizen and corporate client booking records.';
+        document.getElementById('trackSecDesc').textContent = 'Citizen and corporate client booking records • Cancellation & deletion management.';
         document.getElementById('filterInput').placeholder = 'Search by reference #...';
         document.getElementById('thRef').textContent = 'Reference Code';
         document.getElementById('thApp').textContent = 'Applicant Details';
@@ -1262,6 +1361,10 @@
         document.getElementById('lblRoleModalTitle').textContent = 'Role & Persona Selection';
         document.getElementById('lblRoleModalDesc').textContent = 'Select demonstration persona to operate this portal:';
         document.getElementById('btnRoleModalClose').textContent = 'Close';
+        document.getElementById('deleteAppModalTitle').innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Cancel / Delete Application';
+        document.getElementById('deleteAppModalDesc').textContent = 'Are you sure you want to permanently cancel and delete this public service booking? The slot will be returned to the Redis lock pool.';
+        document.getElementById('btnCancelDeleteApp').textContent = 'Cancel';
+        document.getElementById('btnConfirmDeleteApp').innerHTML = '<i class="bi bi-trash3-fill"></i> Delete Application';
         if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Public GovTech Services & Booking Login Portal';
         if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').textContent = 'National ID / Corporate Email';
         if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').textContent = 'e-Gov / System Password';
@@ -1443,14 +1546,43 @@
           </td>
           <td style="font-family:var(--font-mono);font-size:0.85rem;">${app.slot}</td>
           <td><span class="badge ${app.badgeClass}">${status}</span></td>
-          <td style="text-align:right;">
-            <button class="btn btn-outline btn-sm" onclick="showToast(currentLang === 'tr' ? 'Dijital geçiş kartı hazır.' : 'Digital pass generated.')">
+          <td style="text-align:right;white-space:nowrap;">
+            <button class="btn btn-outline btn-sm" onclick="showToast(currentLang === 'tr' ? 'Dijital geçiş kartı hazır.' : 'Digital pass generated.')" title="${currentLang === 'tr' ? 'Kartı Göster' : 'Show Pass'}">
               <i class="bi bi-qr-code"></i> ${currentLang === 'tr' ? 'Kart' : 'Pass'}
+            </button>
+            <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:#fca5a5;margin-left:0.35rem;" onclick="promptDeleteApplication('${app.id}')" title="${currentLang === 'tr' ? 'Başvuruyu İptal Et / Sil' : 'Cancel / Delete Application'}">
+              <i class="bi bi-trash3"></i>
             </button>
           </td>
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    let appToDeleteId = null;
+
+    function promptDeleteApplication(id) {
+      const app = applications.find(a => a.id === id);
+      if (!app) return;
+      appToDeleteId = id;
+      const service = currentLang === 'tr' ? (app.serviceTr || app.service) : (app.serviceEn || app.service);
+
+      document.getElementById('deleteAppTargetInfo').innerHTML = `<strong>${app.id}</strong> &bull; ${app.applicant}<br><span style="font-size:0.78rem;color:#64748b;">${service} &bull; ${app.slot}</span>`;
+      document.getElementById('deleteAppModal').classList.add('active');
+    }
+
+    function closeDeleteAppModal() {
+      document.getElementById('deleteAppModal').classList.remove('active');
+      appToDeleteId = null;
+    }
+
+    function executeDeleteApplication() {
+      if (!appToDeleteId) return;
+      applications = applications.filter(a => a.id !== appToDeleteId);
+      saveState();
+      renderApplications();
+      closeDeleteAppModal();
+      showToast(currentLang === 'tr' ? 'Başvuru iptal edildi ve sistemden silindi.' : 'Application cancelled and purged from system.');
     }
 
     function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
