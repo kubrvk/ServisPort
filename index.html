@@ -510,12 +510,12 @@
     }
     .toast.show { transform: translateY(0); opacity: 1; }
 
-    /* Fullscreen Login Portal */
+    /* Official Civic Desk E-Government Login */
     .login-overlay {
       position: fixed;
       inset: 0;
       z-index: 10000;
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      background: linear-gradient(135deg, #042f2e 0%, #0f766e 50%, #134e4a 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -523,25 +523,79 @@
       padding: 1.5rem;
       overflow-y: auto;
     }
-    .login-box {
+    .civic-login-box {
       background: #ffffff;
       color: #0f172a;
-      border-radius: 16px;
+      border-radius: 14px;
       width: 100%;
-      max-width: 440px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-      padding: 2rem;
-      border: 1px solid #e2e8f0;
+      max-width: 485px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(13, 148, 136, 0.2);
+      border: 1px solid #ccfbf1;
+      overflow: hidden;
       position: relative;
     }
-    .login-box .form-label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #475569;
-      margin-bottom: 0.35rem;
-      display: block;
+    .civic-gov-header-bar {
+      background: #042f2e;
+      color: #ffffff;
+      padding: 0.65rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #0d9488;
     }
-    .login-box .form-control {
+    .civic-gov-crest {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #f0fdfa;
+    }
+    .civic-login-body {
+      padding: 1.75rem 2rem;
+    }
+    .civic-brand-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .civic-icon-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0f766e, #0d9488);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+    }
+    .civic-trust-alert {
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+      color: #0f766e;
+      border-radius: 6px;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      margin-bottom: 1.15rem;
+    }
+    .civic-login-box .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--font-mono);
+    }
+    .civic-login-box .form-control {
       width: 100%;
       padding: 0.65rem 0.85rem;
       border: 1px solid #cbd5e1;
@@ -549,38 +603,39 @@
       font-size: 0.9rem;
       color: #0f172a;
       background: #f8fafc;
+      font-family: var(--font-mono);
       transition: all 0.15s;
     }
-    .login-box .form-control:focus {
+    .civic-login-box .form-control:focus {
       outline: none;
-      border-color: var(--primary);
+      border-color: #0d9488;
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
     }
-    .login-creds-box {
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
+    .civic-creds-box {
+      background: #f0fdf4;
+      border: 1px dashed #86efac;
       border-radius: 10px;
       padding: 0.85rem 1rem;
       margin-top: 1.25rem;
       font-size: 0.82rem;
-      color: #334155;
+      color: #166534;
     }
     .role-quick-btn {
       background: #ffffff;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #a7f3d0;
       border-radius: 6px;
       padding: 0.25rem 0.55rem;
       font-size: 0.76rem;
       font-weight: 600;
       cursor: pointer;
-      color: #334155;
+      color: #065f46;
       transition: all 0.15s;
     }
     .role-quick-btn:hover, .role-quick-btn.active {
-      border-color: var(--primary);
-      color: var(--primary);
-      background: #eff6ff;
+      border-color: #0d9488;
+      color: #ffffff;
+      background: #0f766e;
     }
     .login-footer {
       margin-top: 1.5rem;
@@ -593,7 +648,7 @@
       color: #64748b;
     }
     .login-footer a {
-      color: var(--primary);
+      color: #0f766e;
       text-decoration: none;
       font-weight: 600;
       display: inline-flex;
@@ -605,72 +660,84 @@
 </head>
 <body>
 
-  <!-- Fullscreen Login Portal (Initial Gate) -->
+  <!-- Fullscreen Login Portal (Official Civic Desk E-Government) -->
   <div class="login-overlay" id="loginPortal">
-    <div class="login-box">
-      <!-- Top header with Lang toggle -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
-        <div style="display:flex;align-items:center;gap:0.65rem;">
-          <div class="brand-icon" style="width:36px;height:36px;font-size:1.15rem;"><i class="bi bi-shield-check"></i></div>
-          <div>
-            <div style="font-weight:800;font-size:1.2rem;color:#0f172a;line-height:1.2;">ServisPort</div>
-            <div style="font-size:0.75rem;color:#64748b;" id="lblLoginSubtitle">Kamu Hizmetleri &amp; Randevu Giriş Portalı</div>
-          </div>
+    <div class="civic-login-box">
+      <!-- Top Municipal Banner -->
+      <div class="civic-gov-header-bar">
+        <div class="civic-gov-crest">
+          <i class="bi bi-bank2" style="font-size:1.15rem;color:#facc15;"></i>
+          <span id="lblGovCrest">T.C. AKILLI BELEDİYECİLİK BİLGİ SİSTEMİ</span>
         </div>
-        <div class="lang-toggle" onclick="toggleLanguage()" style="background:#f1f5f9;color:#0f172a;border-color:#cbd5e1;">
+        <div class="lang-toggle" onclick="toggleLanguage()" style="background:rgba(255,255,255,0.08);color:#e2e8f0;border-color:rgba(255,255,255,0.15);padding:0.2rem 0.5rem;font-size:0.75rem;">
           <span id="loginLangTr" class="active">TR</span>
           <span style="opacity:0.4;">|</span>
           <span id="loginLangEn">EN</span>
         </div>
       </div>
 
-      <form onsubmit="event.preventDefault(); submitLogin();">
-        <div style="margin-bottom:0.85rem;">
-          <label class="form-label" id="lblLoginUser">T.C. Kimlik No / Kurumsal E-posta</label>
-          <input type="text" id="loginEmail" class="form-control" value="vatandas@servisport.gov.tr" required>
+      <div class="civic-login-body">
+        <div class="civic-brand-header">
+          <div class="civic-icon-badge"><i class="bi bi-shield-check"></i></div>
+          <div>
+            <div style="font-weight:900;font-size:1.25rem;color:#0f172a;line-height:1.2;letter-spacing:-0.4px;">ServisPort<span style="color:#0f766e;">.KamuMasası</span></div>
+            <div style="font-size:0.76rem;color:#64748b;" id="lblLoginSubtitle">Online Randevu, Ruhsat Başvurusu &amp; Belediye Hizmet Takip Portalı</div>
+          </div>
         </div>
-        <div style="margin-bottom:1rem;">
-          <label class="form-label" id="lblLoginPass">e-Devlet / Sistem Şifresi</label>
-          <input type="password" id="loginPassword" class="form-control" value="servis2026" required>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;font-size:0.8rem;color:#64748b;">
-          <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
-            <input type="checkbox" checked style="accent-color:var(--primary);"> <span id="lblRemember">Beni Hatırla</span>
-          </label>
-          <span style="color:var(--primary);cursor:pointer;font-weight:600;" id="lblForgot">Şifremi Unuttum</span>
-        </div>
-        <button type="submit" class="btn btn-primary w-100" style="padding:0.75rem;font-size:0.95rem;justify-content:center;" id="btnLoginSubmit">
-          <i class="bi bi-box-arrow-in-right"></i> <span id="btnLoginText">Giriş Yap</span>
-        </button>
-      </form>
 
-      <!-- Pre-filled Demo Credentials Box -->
-      <div class="login-creds-box">
-        <div style="font-weight:700;margin-bottom:0.45rem;display:flex;align-items:center;gap:0.4rem;color:#0f172a;">
-          <i class="bi bi-key-fill" style="color:var(--primary);"></i>
-          <span id="lblDemoCredsTitle">Demo Giriş Bilgileri (Hazır Girildi)</span>
+        <div class="civic-trust-alert">
+          <i class="bi bi-patch-check-fill" style="color:#0d9488;font-size:1rem;"></i>
+          <span id="lblGovTrust">256-Bit SSL ve KVKK Uyumlu Güvenli Belediye Oturumu</span>
         </div>
-        <div style="margin-bottom:0.25rem;">
-          <span id="lblCredEmail">E-posta:</span> <strong style="font-family:var(--font-mono);color:#0f172a;" id="displayCredEmail">vatandas@servisport.gov.tr</strong>
-        </div>
-        <div style="margin-bottom:0.65rem;">
-          <span id="lblCredPass">Şifre:</span> <strong style="font-family:var(--font-mono);color:#0f172a;">servis2026</strong>
-        </div>
-        <div style="font-size:0.75rem;color:#64748b;margin-bottom:0.35rem;" id="lblQuickRole">Hızlı Rol Seçimi:</div>
-        <div style="display:flex;gap:0.35rem;flex-wrap:wrap;">
-          <button type="button" class="role-quick-btn active" onclick="setLoginPreset('vatandas', this)">Kullanıcı (Vatandaş)</button>
-          <button type="button" class="role-quick-btn" onclick="setLoginPreset('musteri', this)">Müşteri (Kurumsal)</button>
-          <button type="button" class="role-quick-btn" onclick="setLoginPreset('sorumlu', this)">Birim Sorumlusu</button>
-        </div>
-      </div>
 
-      <!-- Footer on Login Screen -->
-      <div class="login-footer">
-        <div>Developed by Beraat Yetkin</div>
-        <div>
-          <a href="https://github.com/kubrvk/ServisPort" target="_blank" rel="noopener noreferrer">
-            <i class="bi bi-github"></i> GitHub
-          </a>
+        <form onsubmit="event.preventDefault(); submitLogin();">
+          <div style="margin-bottom:0.85rem;">
+            <label class="form-label" id="lblLoginUser"><i class="bi bi-person-badge"></i> T.C. Kimlik No / Kurumsal E-posta</label>
+            <input type="text" id="loginEmail" class="form-control" value="vatandas@servisport.gov.tr" required>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label class="form-label" id="lblLoginPass"><i class="bi bi-shield-lock"></i> E-Devlet / Belediye Hizmet Şifresi</label>
+            <input type="password" id="loginPassword" class="form-control" value="servis2026" required>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;font-size:0.8rem;color:#64748b;">
+            <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+              <input type="checkbox" checked style="accent-color:#0f766e;"> <span id="lblRemember">Beni Hatırla</span>
+            </label>
+            <span style="color:#0f766e;cursor:pointer;font-weight:600;" id="lblForgot">Şifremi Unuttum</span>
+          </div>
+          <button type="submit" class="btn btn-primary w-100" style="padding:0.75rem;font-size:0.95rem;justify-content:center;background:#0f766e;border-color:#0d9488;" id="btnLoginSubmit">
+            <i class="bi bi-door-open-fill"></i> <span id="btnLoginText">Hizmet Masasına Giriş Yap</span>
+          </button>
+        </form>
+
+        <!-- Pre-filled Demo Credentials Box -->
+        <div class="civic-creds-box">
+          <div style="font-weight:700;margin-bottom:0.45rem;display:flex;align-items:center;gap:0.4rem;color:#166534;">
+            <i class="bi bi-person-check-fill" style="color:#0f766e;"></i>
+            <span id="lblDemoCredsTitle">Vatandaş &amp; Yetkili Hesapları (Hazır Girildi)</span>
+          </div>
+          <div style="margin-bottom:0.25rem;font-family:var(--font-mono);font-size:0.78rem;">
+            <span id="lblCredEmail">Giriş E-postası:</span> <strong style="color:#0f172a;" id="displayCredEmail">vatandas@servisport.gov.tr</strong>
+          </div>
+          <div style="margin-bottom:0.65rem;font-family:var(--font-mono);font-size:0.78rem;">
+            <span id="lblCredPass">Erişim Şifresi:</span> <strong style="color:#0f172a;">servis2026</strong>
+          </div>
+          <div style="font-size:0.75rem;color:#15803d;margin-bottom:0.35rem;" id="lblQuickRole">Kamu Rol Seçimi:</div>
+          <div style="display:flex;gap:0.35rem;flex-wrap:wrap;">
+            <button type="button" class="role-quick-btn active" id="btnRoleVatandas" onclick="setLoginPreset('vatandas', this)">Kayıtlı Vatandaş</button>
+            <button type="button" class="role-quick-btn" id="btnRoleMusteri" onclick="setLoginPreset('musteri', this)">Kurumsal Müşteri / Esnaf</button>
+            <button type="button" class="role-quick-btn" id="btnRoleSorumlu" onclick="setLoginPreset('sorumlu', this)">Birim Sorumlusu</button>
+          </div>
+        </div>
+
+        <!-- Footer on Login Screen -->
+        <div class="login-footer">
+          <div>Developed by Beraat Yetkin</div>
+          <div>
+            <a href="https://github.com/kubrvk/ServisPort" target="_blank" rel="noopener noreferrer">
+              <i class="bi bi-github"></i> GitHub
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -1292,16 +1359,21 @@
         document.getElementById('deleteAppModalDesc').textContent = 'Bu kamu hizmeti başvurusunu ve rezerve edilen randevu slotunu sistemden kalıcı olarak silmek istediğinize emin misiniz? Boşalan randevu slotu Redis kilit havuzuna iade edilecektir.';
         document.getElementById('btnCancelDeleteApp').textContent = 'Vazgeç';
         document.getElementById('btnConfirmDeleteApp').innerHTML = '<i class="bi bi-trash3-fill"></i> Başvuruyu Sil';
-        if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Kamu Hizmetleri & Randevu Giriş Portalı';
-        if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').textContent = 'T.C. Kimlik No / Kurumsal E-posta';
-        if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').textContent = 'e-Devlet / Sistem Şifresi';
+        if (document.getElementById('lblGovCrest')) document.getElementById('lblGovCrest').textContent = 'T.C. AKILLI BELEDİYECİLİK BİLGİ SİSTEMİ';
+        if (document.getElementById('lblGovTrust')) document.getElementById('lblGovTrust').textContent = '256-Bit SSL ve KVKK Uyumlu Güvenli Belediye Oturumu';
+        if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Online Randevu, Ruhsat Başvurusu & Belediye Hizmet Takip Portalı';
+        if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').innerHTML = '<i class="bi bi-person-badge"></i> T.C. Kimlik No / Kurumsal E-posta';
+        if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').innerHTML = '<i class="bi bi-shield-lock"></i> E-Devlet / Belediye Hizmet Şifresi';
         if (document.getElementById('lblRemember')) document.getElementById('lblRemember').textContent = 'Beni Hatırla';
         if (document.getElementById('lblForgot')) document.getElementById('lblForgot').textContent = 'Şifremi Unuttum';
-        if (document.getElementById('btnLoginText')) document.getElementById('btnLoginText').textContent = 'Giriş Yap';
-        if (document.getElementById('lblDemoCredsTitle')) document.getElementById('lblDemoCredsTitle').textContent = 'Demo Giriş Bilgileri (Hazır Girildi)';
-        if (document.getElementById('lblCredEmail')) document.getElementById('lblCredEmail').textContent = 'E-posta:';
-        if (document.getElementById('lblCredPass')) document.getElementById('lblCredPass').textContent = 'Şifre:';
-        if (document.getElementById('lblQuickRole')) document.getElementById('lblQuickRole').textContent = 'Hızlı Rol Seçimi:';
+        if (document.getElementById('btnLoginText')) document.getElementById('btnLoginText').textContent = 'Hizmet Masasına Giriş Yap';
+        if (document.getElementById('lblDemoCredsTitle')) document.getElementById('lblDemoCredsTitle').textContent = 'Vatandaş & Yetkili Hesapları (Hazır Girildi)';
+        if (document.getElementById('lblCredEmail')) document.getElementById('lblCredEmail').textContent = 'Giriş E-postası:';
+        if (document.getElementById('lblCredPass')) document.getElementById('lblCredPass').textContent = 'Erişim Şifresi:';
+        if (document.getElementById('lblQuickRole')) document.getElementById('lblQuickRole').textContent = 'Kamu Rol Seçimi:';
+        if (document.getElementById('btnRoleVatandas')) document.getElementById('btnRoleVatandas').textContent = 'Kayıtlı Vatandaş';
+        if (document.getElementById('btnRoleMusteri')) document.getElementById('btnRoleMusteri').textContent = 'Kurumsal Müşteri / Esnaf';
+        if (document.getElementById('btnRoleSorumlu')) document.getElementById('btnRoleSorumlu').textContent = 'Birim Sorumlusu';
         if (document.getElementById('lblLogout')) document.getElementById('lblLogout').textContent = 'Çıkış';
         if (document.getElementById('loginLangTr')) document.getElementById('loginLangTr').className = 'active';
         if (document.getElementById('loginLangEn')) document.getElementById('loginLangEn').className = '';
@@ -1365,16 +1437,21 @@
         document.getElementById('deleteAppModalDesc').textContent = 'Are you sure you want to permanently cancel and delete this public service booking? The slot will be returned to the Redis lock pool.';
         document.getElementById('btnCancelDeleteApp').textContent = 'Cancel';
         document.getElementById('btnConfirmDeleteApp').innerHTML = '<i class="bi bi-trash3-fill"></i> Delete Application';
-        if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Public GovTech Services & Booking Login Portal';
-        if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').textContent = 'National ID / Corporate Email';
-        if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').textContent = 'e-Gov / System Password';
+        if (document.getElementById('lblGovCrest')) document.getElementById('lblGovCrest').textContent = 'T.R. SMART MUNICIPALITY INFORMATION SYSTEM';
+        if (document.getElementById('lblGovTrust')) document.getElementById('lblGovTrust').textContent = '256-Bit SSL & KVKK / GDPR Compliant Secure Civic Session';
+        if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Public Booking, Licensing & Civic Desk Services Portal';
+        if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').innerHTML = '<i class="bi bi-person-badge"></i> National ID / Official Email';
+        if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').innerHTML = '<i class="bi bi-shield-lock"></i> e-Government / Service Password';
         if (document.getElementById('lblRemember')) document.getElementById('lblRemember').textContent = 'Remember Me';
         if (document.getElementById('lblForgot')) document.getElementById('lblForgot').textContent = 'Forgot Password';
-        if (document.getElementById('btnLoginText')) document.getElementById('btnLoginText').textContent = 'Sign In';
-        if (document.getElementById('lblDemoCredsTitle')) document.getElementById('lblDemoCredsTitle').textContent = 'Demo Credentials (Pre-filled)';
-        if (document.getElementById('lblCredEmail')) document.getElementById('lblCredEmail').textContent = 'Email:';
-        if (document.getElementById('lblCredPass')) document.getElementById('lblCredPass').textContent = 'Password:';
-        if (document.getElementById('lblQuickRole')) document.getElementById('lblQuickRole').textContent = 'Quick Role Switch:';
+        if (document.getElementById('btnLoginText')) document.getElementById('btnLoginText').textContent = 'Sign In to Service Desk';
+        if (document.getElementById('lblDemoCredsTitle')) document.getElementById('lblDemoCredsTitle').textContent = 'Civic & Officer Demo Accounts (Pre-filled)';
+        if (document.getElementById('lblCredEmail')) document.getElementById('lblCredEmail').textContent = 'Login Email:';
+        if (document.getElementById('lblCredPass')) document.getElementById('lblCredPass').textContent = 'Access Password:';
+        if (document.getElementById('lblQuickRole')) document.getElementById('lblQuickRole').textContent = 'Civic Role Selector:';
+        if (document.getElementById('btnRoleVatandas')) document.getElementById('btnRoleVatandas').textContent = 'Registered Citizen';
+        if (document.getElementById('btnRoleMusteri')) document.getElementById('btnRoleMusteri').textContent = 'Corporate Client / Merchant';
+        if (document.getElementById('btnRoleSorumlu')) document.getElementById('btnRoleSorumlu').textContent = 'Desk Officer';
         if (document.getElementById('lblLogout')) document.getElementById('lblLogout').textContent = 'Logout';
         if (document.getElementById('loginLangTr')) document.getElementById('loginLangTr').className = '';
         if (document.getElementById('loginLangEn')) document.getElementById('loginLangEn').className = 'active';
