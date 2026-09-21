@@ -465,9 +465,172 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Fullscreen Login Portal */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    .login-box {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+      position: relative;
+    }
+    .login-box .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 0.35rem;
+      display: block;
+    }
+    .login-box .form-control {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #0f172a;
+      background: #f8fafc;
+      transition: all 0.15s;
+    }
+    .login-box .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+    }
+    .login-creds-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      margin-top: 1.25rem;
+      font-size: 0.82rem;
+      color: #334155;
+    }
+    .role-quick-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0.25rem 0.55rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #334155;
+      transition: all 0.15s;
+    }
+    .role-quick-btn:hover, .role-quick-btn.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #eff6ff;
+    }
+    .login-footer {
+      margin-top: 1.5rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .login-footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
+
+  <!-- Fullscreen Login Portal (Initial Gate) -->
+  <div class="login-overlay" id="loginPortal">
+    <div class="login-box">
+      <!-- Top header with Lang toggle -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <div style="display:flex;align-items:center;gap:0.65rem;">
+          <div class="brand-icon" style="width:36px;height:36px;font-size:1.15rem;"><i class="bi bi-shield-check"></i></div>
+          <div>
+            <div style="font-weight:800;font-size:1.2rem;color:#0f172a;line-height:1.2;">ServisPort</div>
+            <div style="font-size:0.75rem;color:#64748b;" id="lblLoginSubtitle">Kamu Hizmetleri &amp; Randevu Giriş Portalı</div>
+          </div>
+        </div>
+        <div class="lang-toggle" onclick="toggleLanguage()" style="background:#f1f5f9;color:#0f172a;border-color:#cbd5e1;">
+          <span id="loginLangTr" class="active">TR</span>
+          <span style="opacity:0.4;">|</span>
+          <span id="loginLangEn">EN</span>
+        </div>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitLogin();">
+        <div style="margin-bottom:0.85rem;">
+          <label class="form-label" id="lblLoginUser">T.C. Kimlik No / Kurumsal E-posta</label>
+          <input type="text" id="loginEmail" class="form-control" value="vatandas@servisport.gov.tr" required>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <label class="form-label" id="lblLoginPass">e-Devlet / Sistem Şifresi</label>
+          <input type="password" id="loginPassword" class="form-control" value="servis2026" required>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;font-size:0.8rem;color:#64748b;">
+          <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;">
+            <input type="checkbox" checked style="accent-color:var(--primary);"> <span id="lblRemember">Beni Hatırla</span>
+          </label>
+          <span style="color:var(--primary);cursor:pointer;font-weight:600;" id="lblForgot">Şifremi Unuttum</span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" style="padding:0.75rem;font-size:0.95rem;justify-content:center;" id="btnLoginSubmit">
+          <i class="bi bi-box-arrow-in-right"></i> <span id="btnLoginText">Giriş Yap</span>
+        </button>
+      </form>
+
+      <!-- Pre-filled Demo Credentials Box -->
+      <div class="login-creds-box">
+        <div style="font-weight:700;margin-bottom:0.45rem;display:flex;align-items:center;gap:0.4rem;color:#0f172a;">
+          <i class="bi bi-key-fill" style="color:var(--primary);"></i>
+          <span id="lblDemoCredsTitle">Demo Giriş Bilgileri (Hazır Girildi)</span>
+        </div>
+        <div style="margin-bottom:0.25rem;">
+          <span id="lblCredEmail">E-posta:</span> <strong style="font-family:var(--font-mono);color:#0f172a;" id="displayCredEmail">vatandas@servisport.gov.tr</strong>
+        </div>
+        <div style="margin-bottom:0.65rem;">
+          <span id="lblCredPass">Şifre:</span> <strong style="font-family:var(--font-mono);color:#0f172a;">servis2026</strong>
+        </div>
+        <div style="font-size:0.75rem;color:#64748b;margin-bottom:0.35rem;" id="lblQuickRole">Hızlı Rol Seçimi:</div>
+        <div style="display:flex;gap:0.35rem;flex-wrap:wrap;">
+          <button type="button" class="role-quick-btn active" onclick="setLoginPreset('vatandas', this)">Kullanıcı (Vatandaş)</button>
+          <button type="button" class="role-quick-btn" onclick="setLoginPreset('musteri', this)">Müşteri (Kurumsal)</button>
+          <button type="button" class="role-quick-btn" onclick="setLoginPreset('sorumlu', this)">Birim Sorumlusu</button>
+        </div>
+      </div>
+
+      <!-- Footer on Login Screen -->
+      <div class="login-footer">
+        <div>Developed by Beraat Yetkin</div>
+        <div>
+          <a href="https://github.com/kubrvk/ServisPort" target="_blank" rel="noopener noreferrer">
+            <i class="bi bi-github"></i> GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Header -->
   <header>
@@ -497,7 +660,10 @@
         <span id="headerUserRole" style="font-size:0.75rem;background:#e2e8f0;padding:0.15rem 0.45rem;border-radius:4px;color:#475569;">Vatandaş</span>
       </div>
       <button class="btn btn-outline btn-sm" onclick="openAuthModal()">
-        <i class="bi bi-box-arrow-in-right"></i> <span id="btnSwitchRole">Rol Değiştir</span>
+        <i class="bi bi-person-gear"></i> <span id="btnSwitchRole">Rol Değiştir</span>
+      </button>
+      <button class="btn btn-outline btn-sm" style="color:var(--danger);border-color:#fca5a5;" onclick="logoutUser()">
+        <i class="bi bi-box-arrow-right"></i> <span id="lblLogout">Çıkış</span>
       </button>
     </div>
   </header>
@@ -1029,6 +1195,19 @@
         document.getElementById('lblRoleModalTitle').textContent = 'Rol & Kullanıcı Seçimi';
         document.getElementById('lblRoleModalDesc').textContent = 'İşlem yapmak istediğiniz rolü seçiniz:';
         document.getElementById('btnRoleModalClose').textContent = 'Kapat';
+        if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Kamu Hizmetleri & Randevu Giriş Portalı';
+        if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').textContent = 'T.C. Kimlik No / Kurumsal E-posta';
+        if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').textContent = 'e-Devlet / Sistem Şifresi';
+        if (document.getElementById('lblRemember')) document.getElementById('lblRemember').textContent = 'Beni Hatırla';
+        if (document.getElementById('lblForgot')) document.getElementById('lblForgot').textContent = 'Şifremi Unuttum';
+        if (document.getElementById('btnLoginText')) document.getElementById('btnLoginText').textContent = 'Giriş Yap';
+        if (document.getElementById('lblDemoCredsTitle')) document.getElementById('lblDemoCredsTitle').textContent = 'Demo Giriş Bilgileri (Hazır Girildi)';
+        if (document.getElementById('lblCredEmail')) document.getElementById('lblCredEmail').textContent = 'E-posta:';
+        if (document.getElementById('lblCredPass')) document.getElementById('lblCredPass').textContent = 'Şifre:';
+        if (document.getElementById('lblQuickRole')) document.getElementById('lblQuickRole').textContent = 'Hızlı Rol Seçimi:';
+        if (document.getElementById('lblLogout')) document.getElementById('lblLogout').textContent = 'Çıkış';
+        if (document.getElementById('loginLangTr')) document.getElementById('loginLangTr').className = 'active';
+        if (document.getElementById('loginLangEn')) document.getElementById('loginLangEn').className = '';
       } else {
         document.getElementById('hdrSub').textContent = 'Public GovTech Service Portal';
         document.getElementById('hdrRedisStatus').innerHTML = 'Redis Distributed Lock Active &bull; Redis 7.2 Cluster';
@@ -1083,6 +1262,19 @@
         document.getElementById('lblRoleModalTitle').textContent = 'Role & Persona Selection';
         document.getElementById('lblRoleModalDesc').textContent = 'Select demonstration persona to operate this portal:';
         document.getElementById('btnRoleModalClose').textContent = 'Close';
+        if (document.getElementById('lblLoginSubtitle')) document.getElementById('lblLoginSubtitle').textContent = 'Public GovTech Services & Booking Login Portal';
+        if (document.getElementById('lblLoginUser')) document.getElementById('lblLoginUser').textContent = 'National ID / Corporate Email';
+        if (document.getElementById('lblLoginPass')) document.getElementById('lblLoginPass').textContent = 'e-Gov / System Password';
+        if (document.getElementById('lblRemember')) document.getElementById('lblRemember').textContent = 'Remember Me';
+        if (document.getElementById('lblForgot')) document.getElementById('lblForgot').textContent = 'Forgot Password';
+        if (document.getElementById('btnLoginText')) document.getElementById('btnLoginText').textContent = 'Sign In';
+        if (document.getElementById('lblDemoCredsTitle')) document.getElementById('lblDemoCredsTitle').textContent = 'Demo Credentials (Pre-filled)';
+        if (document.getElementById('lblCredEmail')) document.getElementById('lblCredEmail').textContent = 'Email:';
+        if (document.getElementById('lblCredPass')) document.getElementById('lblCredPass').textContent = 'Password:';
+        if (document.getElementById('lblQuickRole')) document.getElementById('lblQuickRole').textContent = 'Quick Role Switch:';
+        if (document.getElementById('lblLogout')) document.getElementById('lblLogout').textContent = 'Logout';
+        if (document.getElementById('loginLangTr')) document.getElementById('loginLangTr').className = '';
+        if (document.getElementById('loginLangEn')) document.getElementById('loginLangEn').className = 'active';
       }
 
       renderApplications();
@@ -1274,6 +1466,51 @@
       document.getElementById('applicantFullName').value = name;
       closeAuthModal();
       showToast(currentLang === 'tr' ? `Aktif Rol: ${name}` : `Active Role: ${name}`);
+    }
+
+    function submitLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+      if (!email || !pass) {
+        showToast(currentLang === 'tr' ? 'Lütfen kimlik/e-posta ve şifrenizi giriniz.' : 'Please enter ID/email and password.');
+        return;
+      }
+      
+      const btn = document.getElementById('btnLoginSubmit');
+      const origText = btn.innerHTML;
+      btn.innerHTML = `<i class="bi bi-hourglass-split"></i> <span>${currentLang === 'tr' ? 'Giriş Yapılıyor...' : 'Signing in...'}</span>`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = origText;
+        btn.disabled = false;
+        document.getElementById('loginPortal').style.display = 'none';
+        showToast(currentLang === 'tr' ? `Giriş başarılı! Aktif Kullanıcı: ${currentUser.name}` : `Login successful! Active Persona: ${currentUser.name}`);
+      }, 350);
+    }
+
+    function logoutUser() {
+      document.getElementById('loginPortal').style.display = 'flex';
+      showToast(currentLang === 'tr' ? 'Oturum kapatıldı. Giriş ekranına dönüldü.' : 'Logged out. Returned to login portal.');
+    }
+
+    function setLoginPreset(roleKey, btn) {
+      document.querySelectorAll('.role-quick-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      if (roleKey === 'vatandas') {
+        document.getElementById('loginEmail').value = 'vatandas@servisport.gov.tr';
+        document.getElementById('displayCredEmail').textContent = 'vatandas@servisport.gov.tr';
+        pickRole('Kullanıcı', 'Vatandaş');
+      } else if (roleKey === 'musteri') {
+        document.getElementById('loginEmail').value = 'musteri@kurum.com';
+        document.getElementById('displayCredEmail').textContent = 'musteri@kurum.com';
+        pickRole('Müşteri', 'Kurumsal Temsilci');
+      } else if (roleKey === 'sorumlu') {
+        document.getElementById('loginEmail').value = 'sorumlu@servisport.gov.tr';
+        document.getElementById('displayCredEmail').textContent = 'sorumlu@servisport.gov.tr';
+        pickRole('Birim Sorumlusu', 'Belediye Yetkilisi');
+      }
     }
 
     // Init TR default
