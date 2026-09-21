@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServisPort — Dijital Kamu Hizmetleri &amp; Randevu Portalı</title>
+  <meta name="description" content="ServisPort: Yüksek eşzamanlı dijital kamu hizmetleri, Redis tabanlı randevu slot rezervasyonu ve başvuru takip platformu.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3L4 8v8c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V8L16 3z' fill='%231d4ed8'/%3E%3Cpath d='M11 16l3.5 3.5 6.5-6.5' stroke='%23ffffff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --primary-subtle: #eff6ff;
+      --accent: #059669;
+      --accent-subtle: #ecfdf5;
+      --warning: #d97706;
+      --warning-subtle: #fffbeb;
+      --danger: #dc2626;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+      --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary-subtle);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      color: var(--primary);
+      font-weight: 600;
+      border: 1px solid #bfdbfe;
+    }
+    .header-center span.pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #22c55e;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      padding: 0.25rem 0.55rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: #fff;
+      user-select: none;
+    }
+    .lang-toggle span.active { color: var(--primary); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-outline { background: var(--surface); border-color: var(--border-strong); color: var(--text); }
+    .btn-outline:hover { background: #f1f5f9; border-color: #94a3b8; }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: #047857; }
+    .btn-sm { padding: 0.35rem 0.65rem; font-size: 0.8rem; }
+    
+    .nav-tabs-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+    .tab-btn {
+      padding: 0.85rem 0.2rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .gov-banner {
+      background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .gov-banner h1 {
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.4rem;
+    }
+    .gov-banner p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      max-width: 680px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stepper {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .stepper::before {
+      content: '';
+      position: absolute;
+      top: 18px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: var(--border);
+      z-index: 1;
+    }
+    .step-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 2;
+      background: var(--surface);
+      padding: 0 0.5rem;
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      border: 2px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .step-node.active .step-circle { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .step-node.completed .step-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .step-label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); }
+    .step-node.active .step-label { color: var(--primary); font-weight: 700; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+    }
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 768px) { .form-grid-2 { grid-template-columns: 1fr; } }
+
+    .cat-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .cat-card {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .cat-card:hover { border-color: #93c5fd; transform: translateY(-2px); }
+    .cat-card.selected { border-color: var(--primary); background: var(--primary-subtle); }
+    .cat-icon { font-size: 1.6rem; color: var(--primary); }
+    .cat-title { font-weight: 700; font-size: 0.95rem; }
+    .cat-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .slot-btn {
+      padding: 0.65rem 0.5rem;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: #fff;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .slot-btn:hover:not(:disabled) { border-color: var(--primary); background: #f8fafc; }
+    .slot-btn.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .slot-btn:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-color: #e2e8f0; text-decoration: line-through; }
+
+    .redis-lock-box {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+      color: #92400e;
+    }
+    .redis-timer {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: #fef3c7;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #fcd34d;
+    }
+
+    .dropzone {
+      border: 2px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      background: #fafafa;
+      cursor: pointer;
+    }
+    .dropzone:hover { border-color: var(--primary); background: var(--primary-subtle); }
+    .dropzone i { font-size: 2.2rem; color: var(--primary); margin-bottom: 0.5rem; display: block; }
+
+    .app-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .app-table th { background: #f8fafc; padding: 0.75rem 1rem; text-align: left; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+    .app-table td { padding: 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .badge-approved { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .badge-review { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+    .badge-confirmed { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-cancelled { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-card {
+      background: #fff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+    }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background: #f8fafc;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Exact User-Specified Footer */
+    footer {
+      background: #fff;
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    footer a { color: var(--primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem; }
+    footer a:hover { text-decoration: underline; }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #0f172a;
+      color: #fff;
+      padding: 0.85rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 2000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="brand">
+      <div class="brand-icon"><i class="bi bi-shield-check"></i></div>
+      <div>
+        <span>ServisPort</span>
+        <span style="font-size:0.75rem;font-weight:500;color:var(--text-muted);display:block;margin-top:-3px;" id="hdrSub">Dijital Kamu Hizmetleri Portalı</span>
+      </div>
+    </a>
+
+    <div class="header-center">
+      <span class="pulse-dot"></span>
+      <span id="hdrRedisStatus">Redis Dağıtık Kilit Aktif &bull; Redis 7.2 Kümesi</span>
+    </div>
+
+    <div class="header-right">
+      <div class="lang-toggle" onclick="toggleLanguage()">
+        <span id="langTr" class="active">TR</span>
+        <span style="opacity:0.4;">|</span>
+        <span id="langEn">EN</span>
+      </div>
+
+      <div id="userBadge" style="display:flex;align-items:center;gap:0.5rem;font-size:0.88rem;">
+        <i class="bi bi-person-circle" style="font-size:1.3rem;color:var(--primary);"></i>
+        <span id="headerUserName" style="font-weight:600;">Kullanıcı</span>
+        <span id="headerUserRole" style="font-size:0.75rem;background:#e2e8f0;padding:0.15rem 0.45rem;border-radius:4px;color:#475569;">Vatandaş</span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="openAuthModal()">
+        <i class="bi bi-box-arrow-in-right"></i> <span id="btnSwitchRole">Rol Değiştir</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('booking', this)" id="tabNav1">
+      <i class="bi bi-calendar-plus"></i> Yeni Başvuru &amp; Randevu
+    </button>
+    <button class="tab-btn" onclick="switchTab('tracking', this)" id="tabNav2">
+      <i class="bi bi-card-checklist"></i> Başvuru Takip &amp; Durum (<span id="myAppCount">8</span>)
+    </button>
+    <button class="tab-btn" onclick="switchTab('telemetry', this)" id="tabNav3">
+      <i class="bi bi-activity"></i> Redis Slot Kümesi Telemetrisi
+    </button>
+  </div>
+
+  <main>
+    <div class="gov-banner">
+      <div>
+        <h1 id="bannerTitle">Dijital Kamu Hizmetleri &amp; Randevu Platformu</h1>
+        <p id="bannerDesc">Alt-milisaniye seviyesinde çift randevu engelleme, anlık Redis dağıtık kilit rezervasyonu ve resmi evrak doğrulama altyapısı.</p>
+      </div>
+    </div>
+
+    <!-- TAB 1: Booking & New Application -->
+    <div id="tab-booking" class="tab-content">
+      <div class="card">
+        <div class="stepper">
+          <div class="step-node active" id="stepNode1">
+            <div class="step-circle">1</div>
+            <div class="step-label" id="stpLbl1">Hizmet Seçimi</div>
+          </div>
+          <div class="step-node" id="stepNode2">
+            <div class="step-circle">2</div>
+            <div class="step-label" id="stpLbl2">Slot Kilitleme</div>
+          </div>
+          <div class="step-node" id="stepNode3">
+            <div class="step-circle">3</div>
+            <div class="step-label" id="stpLbl3">Belge Doğrulama</div>
+          </div>
+          <div class="step-node" id="stepNode4">
+            <div class="step-circle">4</div>
+            <div class="step-label" id="stpLbl4">Onay Belgesi</div>
+          </div>
+        </div>
+
+        <form id="appointmentForm" onsubmit="handleFormSubmit(event)">
+          <!-- STEP 1 -->
+          <div id="stepSection1">
+            <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:1rem;" id="secTitleStep1">1. Hizmet Kategorisi Seçiniz</h3>
+            <div class="cat-selector">
+              <div class="cat-card selected" onclick="selectService('civil', this)">
+                <i class="bi bi-person-vcard cat-icon"></i>
+                <div class="cat-title" id="cat1Title">Nüfus &amp; Kimlik Hizmetleri</div>
+                <div class="cat-desc" id="cat1Desc">Kimlik kartı yenileme, yerleşim yeri bildirimi, nüfus kayıt suretleri.</div>
+              </div>
+              <div class="cat-card" onclick="selectService('permit', this)">
+                <i class="bi bi-building-gear cat-icon"></i>
+                <div class="cat-title" id="cat2Title">İmar &amp; Yapı Ruhsatı</div>
+                <div class="cat-desc" id="cat2Desc">Mimari proje onayı, tadilat izinleri, yapı kullanma izin belgesi.</div>
+              </div>
+              <div class="cat-card" onclick="selectService('business', this)">
+                <i class="bi bi-shop cat-icon"></i>
+                <div class="cat-title" id="cat3Title">İşyeri Ruhsat &amp; Denetim</div>
+                <div class="cat-desc" id="cat3Desc">Ticari işletme ruhsatları, çevre denetim uygunluğu, tabela izinleri.</div>
+              </div>
+              <div class="cat-card" onclick="selectService('social', this)">
+                <i class="bi bi-heart-pulse cat-icon"></i>
+                <div class="cat-title" id="cat4Title">Sosyal Destek &amp; Yardım</div>
+                <div class="cat-desc" id="cat4Desc">Doğalgaz desteği, eğitim yardımları, sosyal dayanışma başvuruları.</div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="button" class="btn btn-primary" onclick="goToStep(2)" id="btnStep1Next">
+                Devam: Slot Seçimi <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div id="stepSection2" style="display:none;">
+            <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:1rem;" id="secTitleStep2">2. Tarih ve Randevu Saati Belirleyin</h3>
+            
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" id="lblDeskLoc">Hizmet Noktası</label>
+                <select class="form-control" id="deskLocation" onchange="refreshSlots()">
+                  <option value="central">Merkez Hizmet Binası (Bölge 1)</option>
+                  <option value="north">Kuzey Bölge Vatandaş Merkezi (Bölge 4)</option>
+                  <option value="east">Doğu İnovasyon Yerleşkesi Birimi</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" id="lblAppDate">Randevu Tarihi</label>
+                <input type="date" class="form-control" id="appointmentDate" value="2026-09-24" min="2026-09-21" onchange="refreshSlots()">
+              </div>
+            </div>
+
+            <label class="form-label" style="margin-top:0.5rem;" id="lblSlotsPool">Uygun Saat Dilimleri (Redis Dağıtık Kilit Havuzu)</label>
+            <div class="slot-grid" id="slotsGrid"></div>
+
+            <div class="redis-lock-box" id="redisLockBanner" style="display:none;">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <i class="bi bi-lock-fill" style="font-size:1.4rem;color:#b45309;"></i>
+                <div>
+                  <strong id="lblLockActive">Redis Dağıtık Slot Kilidi Aktif</strong>
+                  <div style="font-size:0.8rem;color:#b45309;" id="lblLockDesc">Seçilen randevu aralığı çakışmaları önlemek için 10 dakika boyunca adınıza rezerve edildi.</div>
+                </div>
+              </div>
+              <div>
+                <span class="redis-timer" id="slotLockTimer">09:59</span>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-top:1.5rem;">
+              <button type="button" class="btn btn-outline" onclick="goToStep(1)" id="btnStep2Back">
+                <i class="bi bi-arrow-left"></i> Geri
+              </button>
+              <button type="button" class="btn btn-primary" id="step2NextBtn" disabled onclick="goToStep(3)">
+                Devam: Evrak Doğrulama <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div id="stepSection3" style="display:none;">
+            <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:1rem;" id="secTitleStep3">3. Başvuru Sahibi Bilgileri</h3>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" id="lblAppId">Başvuran T.C. Kimlik / Başvuru No</label>
+                <input type="text" class="form-control" id="applicantId" required value="10928374821">
+              </div>
+              <div class="form-group">
+                <label class="form-label" id="lblAppName">Başvuran Tanımı</label>
+                <input type="text" class="form-control" id="applicantFullName" required value="Kullanıcı #10928">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" id="lblDocs">Doğrulama Belgeleri (e-Devlet / PDF)</label>
+              <div class="dropzone" onclick="simulateFileUpload()">
+                <i class="bi bi-cloud-arrow-up"></i>
+                <div style="font-weight:600;font-size:0.95rem;" id="lblDropText">Doğrulama belgesi eklemek için tıklayınız</div>
+                <div id="attachedFiles" style="margin-top:0.85rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
+                  <span style="background:#e0f2fe;color:#0369a1;padding:0.25rem 0.65rem;border-radius:4px;font-size:0.8rem;border:1px solid #bae6fd;">
+                    <i class="bi bi-file-earmark-pdf"></i> ikametgah_belgesi_edevlet.pdf
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-top:1.5rem;">
+              <button type="button" class="btn btn-outline" onclick="goToStep(2)" id="btnStep3Back">
+                <i class="bi bi-arrow-left"></i> Geri
+              </button>
+              <button type="submit" class="btn btn-accent" style="font-weight:700;" id="btnStep3Submit">
+                <i class="bi bi-check2-circle"></i> Başvuruyu Kesinleştir
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 4 -->
+          <div id="stepSection4" style="display:none;text-align:center;padding:1.5rem 0;">
+            <div style="width:68px;height:68px;background:#ecfdf5;color:#059669;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:1rem;border:2px solid #a7f3d0;">
+              <i class="bi bi-check-lg"></i>
+            </div>
+            <h2 style="font-size:1.5rem;font-weight:800;color:var(--text);margin-bottom:0.4rem;" id="lblConfirmTitle">Başvuru Başarıyla Kaydedildi</h2>
+            <p style="color:var(--text-muted);font-size:0.92rem;max-width:520px;margin:0 auto 1.5rem auto;" id="lblConfirmSub">
+              Randevu slotu Redis ve veritabanı kayıtlarına güvenle işlendi. Dijital geçiş barkodu üretildi.
+            </p>
+
+            <div style="background:#f8fafc;border:1px dashed var(--border-strong);border-radius:10px;max-width:440px;margin:0 auto 1.5rem auto;padding:1.25rem;text-align:left;">
+              <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;" id="lblRefCode">Takip Referans Kodu</div>
+              <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--primary);margin:0.25rem 0 0.75rem 0;" id="confirmedTrackingCode">
+                SPT-2026-8942
+              </div>
+              <div style="font-size:0.85rem;display:flex;flex-direction:column;gap:0.35rem;">
+                <div><strong id="lblConfApp">Başvuran:</strong> <span id="confirmedName">Kullanıcı #10928</span></div>
+                <div><strong id="lblConfSvc">Hizmet:</strong> <span id="confirmedService">Nüfus &amp; Kimlik Hizmetleri</span></div>
+                <div><strong id="lblConfTime">Zaman:</strong> <span id="confirmedSlot">2026-09-24 &bull; 10:15</span></div>
+                <div><strong id="lblConfStat">Durum:</strong> <span class="badge badge-confirmed">Slot Kilitlendi</span></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:1rem;justify-content:center;">
+              <button type="button" class="btn btn-outline" onclick="window.print()" id="btnPrintPass">
+                <i class="bi bi-printer"></i> Yazdır
+              </button>
+              <button type="button" class="btn btn-primary" onclick="switchTab('tracking', document.querySelectorAll('.tab-btn')[1])" id="btnGoTracking">
+                Başvurularıma Git <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 2: Tracking (Rich Dataset of 8 records) -->
+    <div id="tab-tracking" class="tab-content" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title" id="trackSecTitle"><i class="bi bi-journal-text text-primary"></i> Kayıtlı Başvuru Dosyaları</h2>
+            <div style="font-size:0.85rem;color:var(--text-muted);margin-top:0.2rem;" id="trackSecDesc">Kullanıcı ve kurumsal müşteri randevu kayıtları.</div>
+          </div>
+          <input type="text" id="filterInput" placeholder="Referans no ile ara..." class="form-control" style="width:220px;padding:0.4rem 0.65rem;font-size:0.85rem;" oninput="renderApplications()">
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th id="thRef">Referans Kodu</th>
+                <th id="thApp">Başvuran Bilgisi</th>
+                <th id="thSvc">Hizmet Türü</th>
+                <th id="thTime">Randevu Zamanı</th>
+                <th id="thStat">İşlem Durumu</th>
+                <th style="text-align:right;" id="thAct">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Telemetry -->
+    <div id="tab-telemetry" class="tab-content" style="display:none;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:1.25rem;margin-bottom:1.5rem;">
+        <div class="card" style="padding:1.25rem;">
+          <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;" id="kpiLatTitle">Redis Kilit Gecikmesi</div>
+          <div style="font-size:1.8rem;font-weight:800;color:var(--primary);margin-top:0.3rem;">0.84 ms</div>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;" id="kpiLockTitle">Eşzamanlı Kilitler</div>
+          <div style="font-size:1.8rem;font-weight:800;color:#0f172a;margin-top:0.3rem;">142</div>
+        </div>
+        <div class="card" style="padding:1.25rem;">
+          <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;" id="kpiColTitle">Önlenen Çakışmalar</div>
+          <div style="font-size:1.8rem;font-weight:800;color:var(--accent);margin-top:0.3rem;">1,894</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title" id="kpiEventTitle"><i class="bi bi-terminal"></i> Canlı Redis Olay Akışı (SETNX &amp; EXPIRE)</h3>
+        </div>
+        <div id="telemetryTerminal" style="background:#0f172a;color:#38bdf8;font-family:var(--font-mono);padding:1.25rem;border-radius:8px;font-size:0.82rem;line-height:1.7;">
+          [03:40:12] REDIS SETNX slot:central:20260924:1015 EX 600 -&gt; OK<br>
+          [03:40:15] CLUSTER REPLICA node-3 -&gt; ACK sync offset 4919028<br>
+          [03:40:18] CACHE_HIT service_catalog_v2 in 0.12ms<br>
+          [03:40:22] REDIS LOCK ACQUIRED slot:north:20260923:1400 EX 600 -&gt; OK<br>
+          [03:40:26] ASYNC_SMS_DISPATCHED to Citizen Gateway (HTTP 200)
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Role Modal -->
+  <div class="modal-backdrop" id="authModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 style="font-size:1.1rem;font-weight:700;"><i class="bi bi-people"></i> <span id="lblRoleModalTitle">Rol &amp; Kullanıcı Seçimi</span></h3>
+        <button style="border:none;background:none;font-size:1.2rem;cursor:pointer;" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;" id="lblRoleModalDesc">
+          İşlem yapmak istediğiniz rolü seçiniz:
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Kullanıcı', 'Vatandaş')">
+            <i class="bi bi-person" style="color:var(--primary);font-size:1.1rem;"></i>
+            <div><strong>Kullanıcı</strong> &bull; Kamu Hizmeti Başvuru Sahibi</div>
+          </div>
+          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Müşteri', 'Kurumsal Temsilci')">
+            <i class="bi bi-building" style="color:var(--accent);font-size:1.1rem;"></i>
+            <div><strong>Müşteri</strong> &bull; Ruhsat ve İmar Talebi Yapan Şirket Yetkilisi</div>
+          </div>
+          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Birim Sorumlusu', 'Memur')">
+            <i class="bi bi-person-badge" style="color:#f59e0b;font-size:1.1rem;"></i>
+            <div><strong>Birim Sorumlusu</strong> &bull; Randevu Kabul Masası Görevlisi</div>
+          </div>
+          <div class="btn btn-outline" style="justify-content:flex-start;" onclick="pickRole('Yönetici', 'Sistem Yöneticisi')">
+            <i class="bi bi-shield-lock" style="color:#ef4444;font-size:1.1rem;"></i>
+            <div><strong>Yönetici</strong> &bull; Sistem Yöneticisi</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeAuthModal()" id="btnRoleModalClose">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exact User-Requested Footer -->
+  <footer>
+    <div>Developed by Beraat Yetkin</div>
+    <div>
+      <a href="https://github.com/kubrvk/ServisPort" target="_blank" rel="noopener noreferrer">
+        <i class="bi bi-github"></i> GitHub
+      </a>
+    </div>
+  </footer>
+
+  <div class="toast" id="toastMsg">
+    <i class="bi bi-info-circle-fill" style="color:#38bdf8;"></i>
+    <span id="toastText">İşlem başarılı.</span>
+  </div>
+
+  <script>
+    let currentLang = localStorage.getItem('servisport_lang') || 'tr';
+
+    let currentUser = JSON.parse(localStorage.getItem('sp_user')) || {
+      name: 'Kullanıcı',
+      role: 'Vatandaş',
+      id: '10928374821'
+    };
+
+    let selectedCategory = 'Nüfus & Kimlik Hizmetleri';
+    let selectedSlot = '10:15 - 10:30';
+    let lockTimerInterval = null;
+    let lockSecondsLeft = 600;
+
+    // Rich Dataset: 8 Realistic Applications
+    let defaultApplications = [
+      {
+        id: 'SPT-2026-8942',
+        applicant: 'Kullanıcı #10928',
+        citizenId: '10928374821',
+        serviceTr: 'Nüfus & Kimlik Hizmetleri',
+        serviceEn: 'Civil Registry & ID Services',
+        slot: '2026-09-24 &bull; 10:15',
+        locationTr: 'Merkez Hizmet Binası',
+        locationEn: 'Central Civic Hall',
+        statusTr: 'Slot Kilitlendi',
+        statusEn: 'Slot Secured',
+        badgeClass: 'badge-confirmed',
+        dateCreated: '2026-09-21'
+      },
+      {
+        id: 'SPT-2026-7721',
+        applicant: 'Müşteri #39201',
+        citizenId: '39201948572',
+        serviceTr: 'İmar & Yapı Ruhsatı',
+        serviceEn: 'Zoning & Building Permits',
+        slot: '2026-09-23 &bull; 14:00',
+        locationTr: 'Kuzey Bölge Merkezi',
+        locationEn: 'North Regional Hub',
+        statusTr: 'İncelemede',
+        statusEn: 'Under Review',
+        badgeClass: 'badge-review',
+        dateCreated: '2026-09-20'
+      },
+      {
+        id: 'SPT-2026-6104',
+        applicant: 'Müşteri #48201',
+        citizenId: '48201938471',
+        serviceTr: 'İşyeri Ruhsat & Denetim',
+        serviceEn: 'Business Licensing & Inspection',
+        slot: '2026-09-22 &bull; 11:30',
+        locationTr: 'Doğu İnovasyon Yerleşkesi',
+        locationEn: 'East Innovation Campus',
+        statusTr: 'Onaylandı',
+        statusEn: 'Approved',
+        badgeClass: 'badge-approved',
+        dateCreated: '2026-09-19'
+      },
+      {
+        id: 'SPT-2026-5389',
+        applicant: 'Kullanıcı #20491',
+        citizenId: '20491823901',
+        serviceTr: 'Sosyal Destek & Yardım',
+        serviceEn: 'Social Aid & Subsidies',
+        slot: '2026-09-25 &bull; 09:30',
+        locationTr: 'Merkez Hizmet Binası',
+        locationEn: 'Central Civic Hall',
+        statusTr: 'Onaylandı',
+        statusEn: 'Approved',
+        badgeClass: 'badge-approved',
+        dateCreated: '2026-09-18'
+      },
+      {
+        id: 'SPT-2026-4210',
+        applicant: 'Müşteri #71920',
+        citizenId: '71920394812',
+        serviceTr: 'İmar & Yapı Ruhsatı',
+        serviceEn: 'Zoning & Building Permits',
+        slot: '2026-09-26 &bull; 13:45',
+        locationTr: 'Batı Sanayi Birimi',
+        locationEn: 'West Industrial Bureau',
+        statusTr: 'Slot Kilitlendi',
+        statusEn: 'Slot Secured',
+        badgeClass: 'badge-confirmed',
+        dateCreated: '2026-09-17'
+      },
+      {
+        id: 'SPT-2026-3184',
+        applicant: 'Müşteri #83910',
+        citizenId: '83910294821',
+        serviceTr: 'İşyeri Ruhsat & Denetim',
+        serviceEn: 'Business Licensing',
+        slot: '2026-09-27 &bull; 15:15',
+        locationTr: 'Doğu Yerleşkesi',
+        locationEn: 'East Campus Hub',
+        statusTr: 'İncelemede',
+        statusEn: 'Under Review',
+        badgeClass: 'badge-review',
+        dateCreated: '2026-09-16'
+      },
+      {
+        id: 'SPT-2026-2941',
+        applicant: 'Kullanıcı #59102',
+        citizenId: '59102938410',
+        serviceTr: 'Nüfus & Kimlik Hizmetleri',
+        serviceEn: 'Civil Registry & ID Services',
+        slot: '2026-09-21 &bull; 09:15',
+        locationTr: 'Merkez Hizmet Binası',
+        locationEn: 'Central Civic Hall',
+        statusTr: 'Tamamlandı',
+        statusEn: 'Completed',
+        badgeClass: 'badge-approved',
+        dateCreated: '2026-09-15'
+      },
+      {
+        id: 'SPT-2026-1823',
+        applicant: 'Kullanıcı #62019',
+        citizenId: '62019384721',
+        serviceTr: 'Sosyal Destek & Yardım',
+        serviceEn: 'Social Aid & Subsidies',
+        slot: '2026-09-22 &bull; 10:45',
+        locationTr: 'Kuzey Bölge Merkezi',
+        locationEn: 'North Regional Hub',
+        statusTr: 'Onaylandı',
+        statusEn: 'Approved',
+        badgeClass: 'badge-approved',
+        dateCreated: '2026-09-14'
+      }
+    ];
+
+    let applications = JSON.parse(localStorage.getItem('sp_apps')) || defaultApplications;
+
+    function saveState() {
+      localStorage.setItem('sp_user', JSON.stringify(currentUser));
+      localStorage.setItem('sp_apps', JSON.stringify(applications));
+      localStorage.setItem('servisport_lang', currentLang);
+      document.getElementById('myAppCount').textContent = applications.length;
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toastMsg');
+      document.getElementById('toastText').textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(`tab-${tab}`).style.display = 'block';
+      if (btn) btn.classList.add('active');
+
+      if (tab === 'tracking') renderApplications();
+    }
+
+    function toggleLanguage() {
+      currentLang = (currentLang === 'tr') ? 'en' : 'tr';
+      applyLanguage(currentLang);
+    }
+
+    function applyLanguage(lang) {
+      document.documentElement.lang = lang;
+      document.getElementById('langTr').className = (lang === 'tr') ? 'active' : '';
+      document.getElementById('langEn').className = (lang === 'en') ? 'active' : '';
+
+      if (lang === 'tr') {
+        document.getElementById('hdrSub').textContent = 'Dijital Kamu Hizmetleri Portalı';
+        document.getElementById('hdrRedisStatus').innerHTML = 'Redis Dağıtık Kilit Aktif &bull; Redis 7.2 Kümesi';
+        document.getElementById('btnSwitchRole').textContent = 'Rol Değiştir';
+        document.getElementById('tabNav1').innerHTML = '<i class="bi bi-calendar-plus"></i> Yeni Başvuru &amp; Randevu';
+        document.getElementById('tabNav2').innerHTML = `<i class="bi bi-card-checklist"></i> Başvuru Takip &amp; Durum (<span id="myAppCount">${applications.length}</span>)`;
+        document.getElementById('tabNav3').innerHTML = '<i class="bi bi-activity"></i> Redis Slot Kümesi Telemetrisi';
+        document.getElementById('bannerTitle').textContent = 'Dijital Kamu Hizmetleri & Randevu Platformu';
+        document.getElementById('bannerDesc').textContent = 'Alt-milisaniye seviyesinde çift randevu engelleme, anlık Redis dağıtık kilit rezervasyonu ve resmi evrak doğrulama altyapısı.';
+        document.getElementById('stpLbl1').textContent = 'Hizmet Seçimi';
+        document.getElementById('stpLbl2').textContent = 'Slot Kilitleme';
+        document.getElementById('stpLbl3').textContent = 'Belge Doğrulama';
+        document.getElementById('stpLbl4').textContent = 'Onay Belgesi';
+        document.getElementById('secTitleStep1').textContent = '1. Hizmet Kategorisi Seçiniz';
+        document.getElementById('cat1Title').textContent = 'Nüfus & Kimlik Hizmetleri';
+        document.getElementById('cat1Desc').textContent = 'Kimlik kartı yenileme, yerleşim yeri bildirimi, nüfus kayıt suretleri.';
+        document.getElementById('cat2Title').textContent = 'İmar & Yapı Ruhsatı';
+        document.getElementById('cat2Desc').textContent = 'Mimari proje onayı, tadilat izinleri, yapı kullanma izin belgesi.';
+        document.getElementById('cat3Title').textContent = 'İşyeri Ruhsat & Denetim';
+        document.getElementById('cat3Desc').textContent = 'Ticari işletme ruhsatları, çevre denetim uygunluğu, tabela izinleri.';
+        document.getElementById('cat4Title').textContent = 'Sosyal Destek & Yardım';
+        document.getElementById('cat4Desc').textContent = 'Doğalgaz desteği, eğitim yardımları, sosyal dayanışma başvuruları.';
+        document.getElementById('btnStep1Next').innerHTML = 'Devam: Slot Seçimi <i class="bi bi-arrow-right"></i>';
+        document.getElementById('secTitleStep2').textContent = '2. Tarih ve Randevu Saati Belirleyin';
+        document.getElementById('lblDeskLoc').textContent = 'Hizmet Noktası';
+        document.getElementById('lblAppDate').textContent = 'Randevu Tarihi';
+        document.getElementById('lblSlotsPool').textContent = 'Uygun Saat Dilimleri (Redis Dağıtık Kilit Havuzu)';
+        document.getElementById('lblLockActive').textContent = 'Redis Dağıtık Slot Kilidi Aktif';
+        document.getElementById('lblLockDesc').textContent = 'Seçilen randevu aralığı çakışmaları önlemek için 10 dakika boyunca adınıza rezerve edildi.';
+        document.getElementById('btnStep2Back').innerHTML = '<i class="bi bi-arrow-left"></i> Geri';
+        document.getElementById('step2NextBtn').innerHTML = 'Devam: Evrak Doğrulama <i class="bi bi-arrow-right"></i>';
+        document.getElementById('secTitleStep3').textContent = '3. Başvuru Sahibi Bilgileri';
+        document.getElementById('lblAppId').textContent = 'Başvuran T.C. Kimlik / Başvuru No';
+        document.getElementById('lblAppName').textContent = 'Başvuran Tanımı';
+        document.getElementById('lblDocs').textContent = 'Doğrulama Belgeleri (e-Devlet / PDF)';
+        document.getElementById('lblDropText').textContent = 'Doğrulama belgesi eklemek için tıklayınız';
+        document.getElementById('btnStep3Back').innerHTML = '<i class="bi bi-arrow-left"></i> Geri';
+        document.getElementById('btnStep3Submit').innerHTML = '<i class="bi bi-check2-circle"></i> Başvuruyu Kesinleştir';
+        document.getElementById('trackSecTitle').innerHTML = '<i class="bi bi-journal-text text-primary"></i> Kayıtlı Başvuru Dosyaları';
+        document.getElementById('trackSecDesc').textContent = 'Kullanıcı ve kurumsal müşteri randevu kayıtları.';
+        document.getElementById('filterInput').placeholder = 'Referans no ile ara...';
+        document.getElementById('thRef').textContent = 'Referans Kodu';
+        document.getElementById('thApp').textContent = 'Başvuran Bilgisi';
+        document.getElementById('thSvc').textContent = 'Hizmet Türü';
+        document.getElementById('thTime').textContent = 'Randevu Zamanı';
+        document.getElementById('thStat').textContent = 'İşlem Durumu';
+        document.getElementById('thAct').textContent = 'İşlem';
+        document.getElementById('kpiLatTitle').textContent = 'Redis Kilit Gecikmesi';
+        document.getElementById('kpiLockTitle').textContent = 'Eşzamanlı Kilitler';
+        document.getElementById('kpiColTitle').textContent = 'Önlenen Çakışmalar';
+        document.getElementById('kpiEventTitle').innerHTML = '<i class="bi bi-terminal"></i> Canlı Redis Olay Akışı (SETNX &amp; EXPIRE)';
+        document.getElementById('lblRoleModalTitle').textContent = 'Rol & Kullanıcı Seçimi';
+        document.getElementById('lblRoleModalDesc').textContent = 'İşlem yapmak istediğiniz rolü seçiniz:';
+        document.getElementById('btnRoleModalClose').textContent = 'Kapat';
+      } else {
+        document.getElementById('hdrSub').textContent = 'Public GovTech Service Portal';
+        document.getElementById('hdrRedisStatus').innerHTML = 'Redis Distributed Lock Active &bull; Redis 7.2 Cluster';
+        document.getElementById('btnSwitchRole').textContent = 'Switch Role';
+        document.getElementById('tabNav1').innerHTML = '<i class="bi bi-calendar-plus"></i> New Application &amp; Booking';
+        document.getElementById('tabNav2').innerHTML = `<i class="bi bi-card-checklist"></i> Applications &amp; Status (<span id="myAppCount">${applications.length}</span>)`;
+        document.getElementById('tabNav3').innerHTML = '<i class="bi bi-activity"></i> Redis Slot Engine Telemetry';
+        document.getElementById('bannerTitle').textContent = 'Digital Public Service Delivery Platform';
+        document.getElementById('bannerDesc').textContent = 'Sub-millisecond duplicate prevention, Redis distributed slot hold locks, and cryptographic identity document validation.';
+        document.getElementById('stpLbl1').textContent = 'Select Service';
+        document.getElementById('stpLbl2').textContent = 'Reserve Slot';
+        document.getElementById('stpLbl3').textContent = 'Verify Documents';
+        document.getElementById('stpLbl4').textContent = 'Confirmation';
+        document.getElementById('secTitleStep1').textContent = '1. Select Public Service Category';
+        document.getElementById('cat1Title').textContent = 'Civil Registry & ID Services';
+        document.getElementById('cat1Desc').textContent = 'Identity renewal, residence change notification, vital records.';
+        document.getElementById('cat2Title').textContent = 'Zoning & Building Permits';
+        document.getElementById('cat2Desc').textContent = 'Architectural plan approvals, renovation permits, occupancy certificates.';
+        document.getElementById('cat3Title').textContent = 'Business Licensing & Inspection';
+        document.getElementById('cat3Desc').textContent = 'Commercial trade licenses, sanitary compliance, signage permits.';
+        document.getElementById('cat4Title').textContent = 'Social Aid & Subsidies';
+        document.getElementById('cat4Desc').textContent = 'Heating support, educational subsidies, municipal welfare grants.';
+        document.getElementById('btnStep1Next').innerHTML = 'Next: Reserve Slot <i class="bi bi-arrow-right"></i>';
+        document.getElementById('secTitleStep2').textContent = '2. Choose Date & Time Window';
+        document.getElementById('lblDeskLoc').textContent = 'Service Desk Location';
+        document.getElementById('lblAppDate').textContent = 'Appointment Date';
+        document.getElementById('lblSlotsPool').textContent = 'Available Time Slots (Redis Distributed Pool)';
+        document.getElementById('lblLockActive').textContent = 'Redis Slot Concurrency Lock Active';
+        document.getElementById('lblLockDesc').textContent = 'Your selected appointment window is locked exclusively in Redis for 10 minutes.';
+        document.getElementById('btnStep2Back').innerHTML = '<i class="bi bi-arrow-left"></i> Back';
+        document.getElementById('step2NextBtn').innerHTML = 'Next: Document Verification <i class="bi bi-arrow-right"></i>';
+        document.getElementById('secTitleStep3').textContent = '3. Applicant Particulars';
+        document.getElementById('lblAppId').textContent = 'Applicant National ID / Ref #';
+        document.getElementById('lblAppName').textContent = 'Applicant Name / Persona';
+        document.getElementById('lblDocs').textContent = 'Verification Documents (e-Government / PDF)';
+        document.getElementById('lblDropText').textContent = 'Click to attach supporting document file';
+        document.getElementById('btnStep3Back').innerHTML = '<i class="bi bi-arrow-left"></i> Back';
+        document.getElementById('btnStep3Submit').innerHTML = '<i class="bi bi-check2-circle"></i> Finalize Application';
+        document.getElementById('trackSecTitle').innerHTML = '<i class="bi bi-journal-text text-primary"></i> Registered Service Records';
+        document.getElementById('trackSecDesc').textContent = 'Citizen and corporate client booking records.';
+        document.getElementById('filterInput').placeholder = 'Search by reference #...';
+        document.getElementById('thRef').textContent = 'Reference Code';
+        document.getElementById('thApp').textContent = 'Applicant Details';
+        document.getElementById('thSvc').textContent = 'Service Type';
+        document.getElementById('thTime').textContent = 'Appointment Time';
+        document.getElementById('thStat').textContent = 'Processing Status';
+        document.getElementById('thAct').textContent = 'Action';
+        document.getElementById('kpiLatTitle').textContent = 'Redis Lock Latency';
+        document.getElementById('kpiLockTitle').textContent = 'Concurrent Slot Locks';
+        document.getElementById('kpiColTitle').textContent = 'Blocked Collisions';
+        document.getElementById('kpiEventTitle').innerHTML = '<i class="bi bi-terminal"></i> Live Redis Event Stream (SETNX &amp; EXPIRE)';
+        document.getElementById('lblRoleModalTitle').textContent = 'Role & Persona Selection';
+        document.getElementById('lblRoleModalDesc').textContent = 'Select demonstration persona to operate this portal:';
+        document.getElementById('btnRoleModalClose').textContent = 'Close';
+      }
+
+      renderApplications();
+      saveState();
+    }
+
+    function selectService(type, card) {
+      document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const titlesTr = {
+        civil: 'Nüfus & Kimlik Hizmetleri',
+        permit: 'İmar & Yapı Ruhsatı',
+        business: 'İşyeri Ruhsat & Denetim',
+        social: 'Sosyal Destek & Yardım'
+      };
+      const titlesEn = {
+        civil: 'Civil Registry & ID Services',
+        permit: 'Zoning & Building Permits',
+        business: 'Business Licensing & Inspection',
+        social: 'Social Aid & Subsidies'
+      };
+      selectedCategory = currentLang === 'tr' ? titlesTr[type] : titlesEn[type];
+      showToast(currentLang === 'tr' ? `Seçilen: ${selectedCategory}` : `Selected: ${selectedCategory}`);
+    }
+
+    function goToStep(stepNumber) {
+      [1, 2, 3, 4].forEach(s => {
+        const sec = document.getElementById(`stepSection${s}`);
+        const node = document.getElementById(`stepNode${s}`);
+        if (sec) sec.style.display = (s === stepNumber) ? 'block' : 'none';
+        if (node) {
+          if (s < stepNumber) node.className = 'step-node completed';
+          else if (s === stepNumber) node.className = 'step-node active';
+          else node.className = 'step-node';
+        }
+      });
+
+      if (stepNumber === 2) refreshSlots();
+    }
+
+    function refreshSlots() {
+      const grid = document.getElementById('slotsGrid');
+      grid.innerHTML = '';
+      const slots = [
+        '09:00 - 09:15', '09:15 - 09:30', '09:30 - 09:45', '09:45 - 10:00',
+        '10:15 - 10:30', '10:30 - 10:45', '11:00 - 11:15', '11:15 - 11:30',
+        '13:30 - 13:45', '14:00 - 14:15', '14:30 - 14:45', '15:15 - 15:30'
+      ];
+      const taken = ['09:00 - 09:15', '11:00 - 11:15'];
+
+      slots.forEach(slot => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'slot-btn';
+        btn.textContent = slot;
+        if (taken.includes(slot)) {
+          btn.disabled = true;
+        } else {
+          btn.onclick = () => lockSlot(slot, btn);
+        }
+        grid.appendChild(btn);
+      });
+    }
+
+    function lockSlot(slot, btn) {
+      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSlot = slot;
+      document.getElementById('step2NextBtn').disabled = false;
+
+      const banner = document.getElementById('redisLockBanner');
+      banner.style.display = 'flex';
+      lockSecondsLeft = 600;
+      clearInterval(lockTimerInterval);
+      
+      lockTimerInterval = setInterval(() => {
+        lockSecondsLeft--;
+        const m = Math.floor(lockSecondsLeft / 60).toString().padStart(2, '0');
+        const s = (lockSecondsLeft % 60).toString().padStart(2, '0');
+        document.getElementById('slotLockTimer').textContent = `${m}:${s}`;
+        if (lockSecondsLeft <= 0) {
+          clearInterval(lockTimerInterval);
+          refreshSlots();
+          banner.style.display = 'none';
+          document.getElementById('step2NextBtn').disabled = true;
+        }
+      }, 1000);
+
+      showToast(currentLang === 'tr' ? `Redis kilidi alındı: ${slot} (10dk geçerli)` : `Redis lock acquired for ${slot} (10m TTL)`);
+    }
+
+    function simulateFileUpload() {
+      showToast(currentLang === 'tr' ? 'Doğrulama belgesi eklendi.' : 'Document attached.');
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const code = `SPT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      const applicantName = document.getElementById('applicantFullName').value || currentUser.name;
+      const citizenId = document.getElementById('applicantId').value || currentUser.id;
+      const dateVal = document.getElementById('appointmentDate').value || '2026-09-24';
+
+      const newApp = {
+        id: code,
+        applicant: applicantName,
+        citizenId: citizenId,
+        serviceTr: selectedCategory,
+        serviceEn: selectedCategory,
+        slot: `${dateVal} &bull; ${selectedSlot}`,
+        locationTr: 'Merkez Hizmet Binası',
+        locationEn: 'Central Civic Hall',
+        statusTr: 'Slot Kilitlendi',
+        statusEn: 'Slot Secured',
+        badgeClass: 'badge-confirmed',
+        dateCreated: new Date().toISOString().split('T')[0]
+      };
+
+      applications.unshift(newApp);
+      saveState();
+
+      document.getElementById('confirmedTrackingCode').textContent = code;
+      document.getElementById('confirmedName').textContent = applicantName;
+      document.getElementById('confirmedService').textContent = selectedCategory;
+      document.getElementById('confirmedSlot').innerHTML = `${dateVal} &bull; ${selectedSlot}`;
+
+      clearInterval(lockTimerInterval);
+      goToStep(4);
+      showToast(currentLang === 'tr' ? `Başvuru oluşturuldu: ${code}` : `Application registered: ${code}`);
+    }
+
+    function renderApplications() {
+      const tbody = document.getElementById('applicationsTableBody');
+      const filter = document.getElementById('filterInput').value.toLowerCase();
+      tbody.innerHTML = '';
+
+      const filtered = applications.filter(a => 
+        a.id.toLowerCase().includes(filter) ||
+        a.applicant.toLowerCase().includes(filter) ||
+        (a.serviceTr && a.serviceTr.toLowerCase().includes(filter)) ||
+        (a.serviceEn && a.serviceEn.toLowerCase().includes(filter))
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">${currentLang === 'tr' ? 'Kayıt bulunamadı.' : 'No records found.'}</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(app => {
+        const service = currentLang === 'tr' ? (app.serviceTr || app.service) : (app.serviceEn || app.service);
+        const location = currentLang === 'tr' ? (app.locationTr || app.location) : (app.locationEn || app.location);
+        const status = currentLang === 'tr' ? (app.statusTr || app.status) : (app.statusEn || app.status);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <strong style="font-family:var(--font-mono);color:var(--primary);">${app.id}</strong>
+            <div style="font-size:0.75rem;color:var(--text-muted);">${app.dateCreated}</div>
+          </td>
+          <td>
+            <strong>${app.applicant}</strong>
+            <div style="font-size:0.78rem;color:var(--text-muted);">ID: ${app.citizenId}</div>
+          </td>
+          <td>
+            <span>${service}</span>
+            <div style="font-size:0.78rem;color:var(--text-muted);">${location}</div>
+          </td>
+          <td style="font-family:var(--font-mono);font-size:0.85rem;">${app.slot}</td>
+          <td><span class="badge ${app.badgeClass}">${status}</span></td>
+          <td style="text-align:right;">
+            <button class="btn btn-outline btn-sm" onclick="showToast(currentLang === 'tr' ? 'Dijital geçiş kartı hazır.' : 'Digital pass generated.')">
+              <i class="bi bi-qr-code"></i> ${currentLang === 'tr' ? 'Kart' : 'Pass'}
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('active'); }
+
+    function pickRole(name, role) {
+      currentUser.name = name;
+      currentUser.role = role;
+      saveState();
+
+      document.getElementById('headerUserName').textContent = name;
+      document.getElementById('headerUserRole').textContent = role;
+      document.getElementById('applicantFullName').value = name;
+      closeAuthModal();
+      showToast(currentLang === 'tr' ? `Aktif Rol: ${name}` : `Active Role: ${name}`);
+    }
+
+    // Init TR default
+    applyLanguage(currentLang);
+    document.getElementById('headerUserName').textContent = currentUser.name;
+    document.getElementById('headerUserRole').textContent = currentUser.role;
+    document.getElementById('applicantFullName').value = currentUser.name;
+    document.getElementById('myAppCount').textContent = applications.length;
+    renderApplications();
+  </script>
+</body>
+</html>
